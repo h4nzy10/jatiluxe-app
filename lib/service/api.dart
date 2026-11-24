@@ -28,17 +28,33 @@ class ApiService {
   }
 
   static dynamic _handleResponse(http.Response response) {
-    final body = response.body.isNotEmpty
-        ? jsonDecode(response.body)
-        : null;
-    if (response.statusCode >= 200 &&
-        response.statusCode < 300) {
+    dynamic body;
+    try {
+      body = response.body.isNotEmpty ? jsonDecode(response.body) : null;
+    } catch (_) {
+      body = null;
+    }
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return body;
     }
-    final message = body is Map
-        ? body['message']
-        : null;
-    throw Exception(message ?? 'Terjadi kesalahan');
+
+    String message = 'Terjadi kesalahan (${response.statusCode})';
+    if (body is Map) {
+      if (body['message'] != null) {
+        message = body['message'].toString();
+      } else if (body['error'] != null) {
+        if (body['error'] is List && (body['error'] as List).isNotEmpty) {
+          final firstIssue = (body['error'] as List).first;
+          message = firstIssue is Map && firstIssue['message'] != null
+              ? firstIssue['message'].toString()
+              : body['error'].toString();
+        } else {
+          message = body['error'].toString();
+        }
+      }
+    }
+    throw Exception(message);
   }
 
   static Future<dynamic> get(String endpoint) async {
