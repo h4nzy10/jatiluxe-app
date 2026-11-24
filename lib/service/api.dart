@@ -96,5 +96,57 @@ class ApiService {
     );
     return _handleResponse(response);
   }
+
+  static Future<dynamic> postMultipart(
+    String endpoint, {
+    Map<String, String>? fields,
+    String? fileField,
+    String? filePath,
+  }) async {
+    final token = await getToken();
+    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl$endpoint'));
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    request.headers['Accept'] = 'application/json';
+
+    if (fields != null) {
+      request.fields.addAll(fields);
+    }
+
+    if (fileField != null && filePath != null && filePath.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    return _handleResponse(response);
+  }
+
+  static Future<dynamic> putMultipart(
+    String endpoint, {
+    Map<String, String>? fields,
+    String? fileField,
+    String? filePath,
+  }) async {
+    final token = await getToken();
+    final request = http.MultipartRequest('PUT', Uri.parse('$_baseUrl$endpoint'));
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    request.headers['Accept'] = 'application/json';
+
+    if (fields != null) {
+      request.fields.addAll(fields);
+    }
+
+    if (fileField != null && filePath != null && filePath.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    return _handleResponse(response);
+  }
 }
 
