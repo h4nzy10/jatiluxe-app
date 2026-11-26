@@ -41,6 +41,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   int _productCount = 0;
   int _stockUnits = 0;
 
+  // Last values received from the server, used to detect no-op saves.
+  String _savedName = '';
+  String _savedEmail = '';
+  String _savedPhone = '';
+  String _savedAddress = '';
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +100,8 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
 
       final name = (user['nama'] ?? '').toString();
       final address = (user['alamat'] ?? '').toString();
+      final email = (user['email'] ?? '').toString();
+      final phone = (user['no_hp'] ?? '').toString();
 
       setState(() {
         _sellerName = name;
@@ -101,9 +109,13 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
         _avatarUrl = user['profile']?.toString();
         _productCount = productCount;
         _stockUnits = stockUnits;
+        _savedName = name;
+        _savedEmail = email;
+        _savedPhone = phone;
+        _savedAddress = address;
         _nameController.text = name;
-        _emailController.text = (user['email'] ?? '').toString();
-        _phoneController.text = (user['no_hp'] ?? '').toString();
+        _emailController.text = email;
+        _phoneController.text = phone;
         _addressController.text = address;
         _isLoading = false;
       });
@@ -133,11 +145,27 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       }
     }
 
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final address = _addressController.text.trim();
+
+    final hasChanges = name != _savedName ||
+        email != _savedEmail ||
+        phone != _savedPhone ||
+        address != _savedAddress ||
+        password.isNotEmpty;
+
+    if (!hasChanges) {
+      _showSnack('Tidak ada perubahan untuk disimpan', isError: false);
+      return;
+    }
+
     final payload = <String, dynamic>{
-      'nama': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'no_hp': _phoneController.text.trim(),
-      'alamat': _addressController.text.trim(),
+      'nama': name,
+      'email': email,
+      'no_hp': phone,
+      'alamat': address,
     };
     if (password.isNotEmpty) {
       payload['current_password'] = currentPassword;
@@ -149,8 +177,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       await ApiService.put('/api/v1/profile', payload);
       if (!mounted) return;
       setState(() {
-        _sellerName = payload['nama'] as String;
-        _sellerAddress = payload['alamat'] as String;
+        _sellerName = name;
+        _sellerAddress = address;
+        _savedName = name;
+        _savedEmail = email;
+        _savedPhone = phone;
+        _savedAddress = address;
         _currentPasswordController.clear();
         _passwordController.clear();
       });
@@ -287,7 +319,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
         ),
         action: actionLabel != null && onAction != null
             ? SnackBarAction(
-                label: actionLabel,
+                label: actionLabel.tr(context),
                 textColor: AppColors.champagneGold,
                 onPressed: onAction,
               )

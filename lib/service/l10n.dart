@@ -51,12 +51,12 @@ class AppL10n {
   /// English literals in the source code that need an Indonesian rendering.
   static const Map<String, String> _indonesian = {
     'Welcome Back': 'Selamat Datang Kembali',
-    'Log in to explore the best teak furniture works':
-        'Masuk untuk menjelajahi karya furnitur jati terbaik',
-    'Join to explore and order premium Jepara teak furniture.':
-        'Gabung untuk menjelajah dan memesan furnitur jati Jepara premium.',
-    'Open a digital showcase and market quality teak furniture works directly to collectors.':
-        'Buka etalase digital dan pasarkan furnitur jati berkualitas langsung ke kolektor.',
+    'Log in to explore the finest wood furniture':
+        'Masuk untuk menjelajahi karya furnitur kayu terbaik',
+    'Join to explore and order premium Jepara wood furniture.':
+        'Gabung untuk menjelajah dan memesan furnitur kayu Jepara premium.',
+    'Open a digital showcase and market quality wood furniture directly to collectors.':
+        'Buka etalase digital dan pasarkan furnitur kayu berkualitas langsung ke kolektor.',
     'Email': 'Email',
     'Password': 'Kata Sandi',
     'Login': 'Masuk',
@@ -69,7 +69,7 @@ class AppL10n {
     'Register Account': 'Daftar Akun',
     'Register Successfuly': 'Pendaftaran Berhasil',
     'Customer': 'Pelanggan',
-    'Seller': 'Penjual',
+    'By': 'Oleh',
     'Delete Karya Jati': 'Hapus Karya Jati',
     'Profile picture successfully updated': 'Foto profil berhasil diperbarui',
     'Wooden Furniture': 'Furnitur Kayu',
@@ -96,6 +96,30 @@ class AppL10n {
     'J A T I L U X E': 'J A T I L U X E',
     'JATILUXE': 'JATILUXE',
     '✦': '✦',
+
+    // Customer catalog
+    'KOLEKSI JATILUXE': 'JATILUXE COLLECTION',
+    'Temukan karya kayu pilihan untuk rumah Anda':
+        'Discover curated wood pieces for your home',
+    'Cari furnitur, jenis kayu, atau kategori...':
+        'Search furniture, wood types, or categories...',
+    'Gagal memuat katalog': 'Failed to load catalog',
+    'Belum ada furnitur di katalog': 'No furniture in the catalog yet',
+    'Coba kata kunci atau kategori lain': 'Try another keyword or category',
+    'Detail produk segera tersedia': 'Product details coming soon',
+    'Detail Produk': 'Product Details',
+    'SPESIFIKASI KARYA': 'PIECE SPECIFICATIONS',
+    'DESKRIPSI & DIMENSI': 'DESCRIPTION & DIMENSIONS',
+    'Pengrajin': 'Artisan',
+    'Jumlah': 'Quantity',
+    'Tambah ke Keranjang': 'Add to Cart',
+    'Beli Langsung': 'Buy Now',
+    'Produk ditambahkan ke keranjang': 'Product added to cart',
+    'Checkout segera tersedia': 'Checkout coming soon',
+    'Gagal memuat detail produk': 'Failed to load product details',
+    'Produk tidak ditemukan': 'Product not found',
+    'ANDA MUNGKIN SUKA': 'YOU MAY ALSO LIKE',
+    'Oleh': 'By',
 
     // Seller navigation
     'RUANG PENJUAL': 'MERCHANT SUITE',
@@ -134,20 +158,21 @@ class AppL10n {
     // Inventory
     'Cari nama mebel, ukiran, atau kategori...':
         'Search furniture, carvings, or categories...',
-    'Contoh: Meja Makan Jati Solid Trembesi':
-        'Example: Solid Trembesi Teak Dining Table',
+    'Contoh: Meja Makan Kayu Solid Trembesi':
+        'Example: Solid Trembesi Wood Dining Table',
     'Sebutkan dimensi (P x L x T), teknik finishing kayu (natural oil, walnut), dan keunggulan serat.':
         'Mention dimensions (W x D x H), wood finishing (natural oil, walnut), and grain highlights.',
     'Tambah Karya': 'Add Piece',
+    'Hapus Karya': 'Delete Piece',
     'Tambah Karya Pertama': 'Add First Piece',
-    'Tambah Karya Jati Baru': 'Add New Teak Piece',
-    'Perbarui Karya Jati': 'Update Teak Piece',
+    'Tambah Karya Kayu Baru': 'Add New Wood Piece',
+    'Perbarui Karya Kayu': 'Update Wood Piece',
     'Daftarkan Karya ke Etalase': 'List Piece in Catalog',
-    'Belum Ada Koleksi Jati': 'No Teak Collection Yet',
-    'Mulai daftarkan karya furnitur kayu jati Anda ke etalase untuk dilihat para kolektor.':
-        'Start listing your teak furniture pieces in the catalog for collectors to see.',
-    'Standar JatiLuxe: Setiap produk kayu jati yang didaftarkan wajib mencantumkan jenis jati (TPK Perhutani / Jati Emas) serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.':
-        'JatiLuxe standard: every registered teak product must state the teak type (TPK Perhutani / Jati Emas) and be photographed in natural light without altering the wood grain color.',
+    'Belum Ada Koleksi Kayu': 'No Wood Collection Yet',
+    'Mulai daftarkan karya furnitur kayu Anda ke etalase untuk dilihat para kolektor.':
+        'Start listing your wood furniture pieces in the catalog for collectors to see.',
+    'Standar JatiLuxe: Setiap produk kayu yang didaftarkan wajib mencantumkan jenis kayu serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.':
+        'JatiLuxe standard: every registered wood product must state the wood type and be photographed in natural light without altering the wood grain color.',
     'Nama Karya Mebel': 'Furniture Name',
     'Kategori': 'Category',
     'Jenis Kayu': 'Wood Type',
@@ -160,16 +185,16 @@ class AppL10n {
     'Stok wajib': 'Stock is required',
     'Stok >= 0': 'Stock >= 0',
     'Deskripsi wajib diisi': 'Description is required',
-    'Foto karya mebel jati wajib diunggah': 'Product photo is required',
-    'Unggah Foto Mebel Jati': 'Upload Teak Furniture Photo',
+    'Foto karya mebel wajib diunggah': 'Product photo is required',
+    'Unggah Foto Mebel': 'Upload Furniture Photo',
     'Ambil Foto Kamera': 'Take Camera Photo',
     'Ambil dari Kamera': 'Take from Camera',
     'Pilih dari Galeri': 'Choose from Gallery',
     'Stok Habis': 'Out of Stock',
     'Foto pencahayaan alami beresolusi tinggi':
         'High-resolution photo in natural light',
-    'Karya jati berhasil diperbarui': 'Teak piece updated successfully',
-    'Karya mebel jati berhasil didaftarkan ke etalase':
+    'Karya kayu berhasil diperbarui': 'Wood piece updated successfully',
+    'Karya mebel berhasil didaftarkan ke etalase':
         'Furniture piece added to the catalog successfully',
     'Produk berhasil dihapus dari etalase':
         'Product removed from the catalog successfully',
@@ -233,6 +258,19 @@ class AppL10n {
     'Perubahan identitas dan foto workshop akan langsung tersinkron dengan katalog dan pesanan Anda.':
         'Identity and workshop photo changes will sync instantly with your catalog and orders.',
     'Gagal memuat profil workshop': 'Failed to load workshop profile',
+    'Data profil workshop tidak ditemukan.':
+        'Workshop profile data was not found.',
+    'Kata sandi saat ini wajib diisi': 'Current password is required',
+    'Kata sandi baru minimal 6 karakter':
+        'New password must be at least 6 characters',
+    'Profil workshop berhasil disimpan': 'Workshop profile saved successfully',
+    'Tidak ada perubahan untuk disimpan': 'No changes to save',
+    'Foto profil workshop diperbarui': 'Workshop profile photo updated',
+    'Izin kamera ditolak. Aktifkan dari pengaturan perangkat.':
+        'Camera permission denied. Enable it in device settings.',
+    'Izin kamera diperlukan untuk mengambil foto':
+        'Camera permission is required to take a photo',
+    'Pengaturan': 'Settings',
     'Gagal mengunggah foto:': 'Failed to upload photo:',
     'Gagal menyimpan:': 'Failed to save:',
 
@@ -253,8 +291,8 @@ class AppL10n {
     'Gunakan ringkasan untuk melihat pesanan terbaru':
         'Use the overview to see recent orders',
     'Bangun Etalase Berkualitas': 'Build a Quality Catalog',
-    'Tambah karya jati maupun kayu pilihan lain lengkap dengan foto, kategori, spesifikasi, harga, dan stok.':
-        'Add teak or other quality wood pieces with photos, categories, specifications, prices, and stock.',
+    'Tambah karya kayu pilihan lengkap dengan foto, kategori, spesifikasi, harga, dan stok.':
+        'Add quality wood pieces with photos, categories, specifications, prices, and stock.',
     'Gunakan foto dengan pencahayaan alami': 'Use photos with natural lighting',
     'Isi dimensi dan teknik finishing di deskripsi':
         'Include dimensions and finishing technique in the description',
@@ -278,8 +316,28 @@ class AppL10n {
         'Open this guide anytime from the help icon',
 
     // Customer
+    'Katalog': 'Catalog',
     'Katalog JatiLuxe': 'JatiLuxe Catalog',
+    'Koleksi Kayu': 'Wood Collection',
+    'KARYA PILIHAN': 'SELECTED PIECE',
     'Storefront Pelanggan siap dibangun': 'Customer storefront coming soon',
+    'Keranjang': 'Cart',
+    'Keranjang Saya': 'My Cart',
+    'Pilih Semua': 'Select All',
+    'Pilih item': 'Select item',
+    'Subtotal': 'Subtotal',
+    'Total': 'Total',
+    'Lanjut ke Checkout': 'Continue to Checkout',
+    'Keranjang masih kosong': 'Your cart is empty',
+    'Temukan karya kayu favorit Anda di katalog':
+        'Find your favorite wood pieces in the catalog',
+    'Jelajahi Katalog': 'Explore Catalog',
+    'Gagal memuat keranjang': 'Failed to load cart',
+    'Item dihapus dari keranjang': 'Item removed from cart',
+    'Hapus item ini dari keranjang?': 'Remove this item from the cart?',
+    'Ya, Hapus': 'Yes, Remove',
+    'Pilih minimal satu item': 'Select at least one item',
+    '1 item dipilih': '1 item selected',
   };
 
   /// Ordered phrase replacements for interpolated strings. Longer, more
@@ -320,8 +378,16 @@ class AppL10n {
     ('Percobaan gagal: ', 'Failed attempts: '),
     ('Gagal menghapus: ', 'Failed to delete: '),
     ('Gagal mengunggah foto: ', 'Failed to upload photo: '),
+    ('Gagal menyimpan profil: ', 'Failed to save profile: '),
     ('Gagal menyimpan: ', 'Failed to save: '),
     ('Stok: ', 'Stock: '),
+    ('Terjual oleh ', 'Sold by '),
+    ('Oleh ', 'By '),
+    ('Gagal menambahkan ke keranjang: ', 'Failed to add to cart: '),
+    ('Gagal memperbarui keranjang: ', 'Failed to update cart: '),
+    ('Gagal menghapus item: ', 'Failed to remove item: '),
+    (' item dipilih', ' items selected'),
+    ('Penjual: ', 'Seller: '),
     ('Tunggu ', 'Wait '),
     ('No. Lacak', 'Tracking No.'),
     ('Pesanan #', 'Order #'),

@@ -210,8 +210,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 6),
                 TText(
                   _isSeller
-                      ? 'Open a digital showcase and market quality teak furniture works directly to collectors.'
-                      : 'Join to explore and order premium Jepara teak furniture.',
+                      ? 'Open a digital showcase and market quality wood furniture directly to collectors.'
+                      : 'Join to explore and order premium Jepara wood furniture.',
                   style: const TextStyle(
                     color: AppColors.ashGrey,
                     fontSize: 13,

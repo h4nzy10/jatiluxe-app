@@ -261,7 +261,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 6),
                   const TText(
-                    'Log in to explore the best teak furniture works',
+                    'Log in to explore the finest wood furniture',
                     style: TextStyle(
                       color: AppColors.ashGrey,
                       fontSize: 13,
