@@ -3,6 +3,7 @@ import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../login.dart';
 import 'seller_dashboard_page.dart';
+import 'seller_inventory_page.dart';
 
 class SellerMainNav extends StatefulWidget {
   const SellerMainNav({super.key});
@@ -84,7 +85,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
         onNavigateToInventory: () => _onTabTapped(1),
         onNavigateToDelivery: () => _onTabTapped(2),
       ),
-      _buildInventoryPlaceholder(),
+      const SellerInventoryPage(),
       _buildDeliveryPlaceholder(),
       _buildProfilePlaceholder(),
     ];
@@ -176,42 +177,6 @@ class _SellerMainNavState extends State<SellerMainNav> {
       default:
         return 'JATILUXE';
     }
-  }
-
-  Widget _buildInventoryPlaceholder() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 52,
-              color: AppColors.champagneGold,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Manajemen Inventaris Jati',
-              style: TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Katalog produk, manajemen stok kayu, dan harga',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.ashGrey,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildDeliveryPlaceholder() {

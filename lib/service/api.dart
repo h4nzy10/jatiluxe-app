@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String _baseUrl = "https://m9t7jm07-3000.asse.devtunnels.ms";
+  static const String _baseUrl = "https://jatiluxe-api.vercel.app";
   static const String _authKey = "auth";
 
   static Future<void> saveToken(String token) async {
