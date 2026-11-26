@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+opeimport 'package:flutter/material.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
@@ -13,7 +13,7 @@ import '../../utils/formatters.dart';
 class CustomerCartPage extends StatefulWidget {
   /// Receives checked cart detail IDs and the computed total. Page 4 will use
   /// this to start checkout without reading the cart again.
-  final void Function(List<int> selectedCartIds, num total)? onCheckout;
+  final void Function(List<int> selectedCartIds, num total, dynamic)? onCheckout;
 
   /// Called when a cart item's product card is tapped.
   final void Function(Map<String, dynamic> product)? onProductSelected;
@@ -724,7 +724,11 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
     final ids = _selectedIds.toList()..sort();
     final callback = widget.onCheckout;
     if (callback != null) {
-      callback(ids, _selectedTotal);
+      final items = _items.where((item) {
+        final id = int.tryParse(item['cart_detail_id']?.toString() ?? '');
+        return id != null && ids.contains(id);
+      }).toList();
+      callback(ids, _selectedTotal, items);
       return;
     }
     // Checkout page will replace this once it is wired in.

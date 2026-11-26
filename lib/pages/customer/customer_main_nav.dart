@@ -4,6 +4,7 @@ import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../login.dart';
 import 'customer_catalog_page.dart';
+import 'customer_checkout_page.dart';
 import 'customer_cart_page.dart';
 import 'customer_product_detail_page.dart';
 
@@ -65,6 +66,8 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             onProductSelected: (product) => _openProductDetail(context, product),
             onBrowseCatalog: () => _onTabTapped(0),
             onCartChanged: () => _refreshCartCount(),
+            onCheckout: (selectedCartIds, total, items) =>
+                _openCheckoutFromCart(context, items),
           ),
         ],
       ),
@@ -121,6 +124,48 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
         builder: (_) => CustomerProductDetailPage(
           productId: (product['id_product'] ?? '').toString(),
           initialProduct: product,
+          onBuyNow: (product, quantity) =>
+              _openCheckout(context, [product], quantity: quantity),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    await _refreshCartCount();
+  }
+
+  Future<void> _openCheckout(
+    BuildContext context,
+    List<Map<String, dynamic>> items, {
+    int quantity = 1,
+    String? initialAddress,
+    String sourceLabel = 'Produk',
+  }) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CheckoutPage(
+          items: items,
+          initialAddress: initialAddress,
+          sourceLabel: sourceLabel,
+          onOrderCreated: () => _refreshCartCount(),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    await _refreshCartCount();
+  }
+
+  Future<void> _openCheckoutFromCart(
+    BuildContext context,
+    List<Map<String, dynamic>> items,
+  ) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CheckoutPage(
+          items: items,
+          sourceLabel: 'Keranjang',
+          onOrderCreated: () => _refreshCartCount(),
         ),
       ),
     );
