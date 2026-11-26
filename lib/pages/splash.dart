@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../constants/theme.dart';
 import '../service/api.dart';
 import 'login.dart';
@@ -86,8 +87,8 @@ class _SplashPageState extends State<SplashPage>
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) => const LoginPage(),
-        transitionsBuilder: (_, animation, __, child) {
+        pageBuilder: (_, _, _) => const LoginPage(),
+        transitionsBuilder: (_, animation, _, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
@@ -99,8 +100,8 @@ class _SplashPageState extends State<SplashPage>
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) => const CustomerMainNav(),
-        transitionsBuilder: (_, animation, __, child) {
+        pageBuilder: (_, _, _) => const CustomerMainNav(),
+        transitionsBuilder: (_, animation, _, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
@@ -112,8 +113,8 @@ class _SplashPageState extends State<SplashPage>
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (_, __, ___) => const SellerMainNav(),
-        transitionsBuilder: (_, animation, __, child) {
+        pageBuilder: (_, _, _) => const SellerMainNav(),
+        transitionsBuilder: (_, animation, _, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
@@ -159,7 +160,7 @@ class _SplashPageState extends State<SplashPage>
                     const SizedBox(height: 32),
 
                     // Main Brand Wordmark
-                    const Text(
+                    const TText(
                       'J A T I L U X E',
                       style: TextStyle(
                         color: AppColors.ivorySilk,
@@ -173,7 +174,7 @@ class _SplashPageState extends State<SplashPage>
                     const SizedBox(height: 12),
 
                     // Natural, quiet tagline
-                    const Text(
+                    const TText(
                       'Wooden Furniture',
                       style: TextStyle(
                         color: AppColors.ashGrey,
@@ -216,7 +217,7 @@ class _SplashPageState extends State<SplashPage>
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: const Center(
-                  child: Text(
+                  child: TText(
                     'JATILUXE',
                     style: TextStyle(
                       color: AppColors.ashGreySubtle,
@@ -263,7 +264,7 @@ class _ArtisanMarkPainter extends CustomPainter {
 
     // Inner minimalist wood grain / joinery lines
     final innerPaint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'constants/theme.dart';
 import 'service/api.dart';
+import 'service/l10n.dart';
 import 'pages/splash.dart';
 import 'pages/login.dart';
 import 'pages/customer/customer_main_nav.dart';
 import 'pages/seller/seller_main_nav.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppL10n.init();
   runApp(const JatiLuxe());
 }
 
@@ -16,11 +18,15 @@ class JatiLuxe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'JatiLuxe',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: const AuthGate(),
+    return ValueListenableBuilder<Locale>(
+      valueListenable: AppL10n.locale,
+      builder: (context, locale, _) => MaterialApp(
+        title: 'JatiLuxe',
+        locale: locale,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkTheme,
+        home: const AuthGate(),
+      ),
     );
   }
 }

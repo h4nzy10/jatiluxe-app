@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../login.dart';
@@ -8,14 +9,19 @@ class CustomerMainNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return L10nBuilder(builder: (context) => _buildPage(context));
+  }
+
+  Widget _buildPage(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       appBar: AppBar(
-        title: const Text('J A T I L U X E'),
+        title: const TText('J A T I L U X E'),
         actions: [
+          const LanguageSwitcher(),
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: AppColors.ashGrey),
-            tooltip: 'Keluar',
+            tooltip: 'Keluar'.tr(context),
             onPressed: () async {
               await ApiService.logout();
               if (context.mounted) {
@@ -39,7 +45,7 @@ class CustomerMainNav extends StatelessWidget {
               color: AppColors.champagneGold,
             ),
             const SizedBox(height: 16),
-            const Text(
+            const TText(
               'Katalog JatiLuxe',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -49,7 +55,7 @@ class CustomerMainNav extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            const TText(
               'Storefront Pelanggan siap dibangun',
               style: TextStyle(
                 color: AppColors.ashGrey,

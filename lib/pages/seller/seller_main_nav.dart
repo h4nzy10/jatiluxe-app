@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../login.dart';
 import 'seller_dashboard_page.dart';
+import 'seller_delivery_page.dart';
 import 'seller_inventory_page.dart';
+import 'seller_onboarding_page.dart';
+import 'seller_profile_page.dart';
 
 class SellerMainNav extends StatefulWidget {
   const SellerMainNav({super.key});
@@ -14,6 +18,29 @@ class SellerMainNav extends StatefulWidget {
 
 class _SellerMainNavState extends State<SellerMainNav> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _showOnboardingIfNeeded(),
+    );
+  }
+
+  Future<void> _showOnboardingIfNeeded() async {
+    final completed = await SellerOnboarding.isCompleted();
+    if (!mounted || completed) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SellerOnboardingPage()),
+    );
+  }
+
+  void _openOnboarding() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const SellerOnboardingPage()),
+    );
+  }
 
   void _onTabTapped(int index) {
     setState(() => _currentIndex = index);
@@ -28,7 +55,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.surfaceBorder, width: 0.8),
         ),
-        title: const Text(
+        title: const TText(
           'Keluar dari Toko',
           style: TextStyle(
             color: AppColors.ivorySilk,
@@ -36,7 +63,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        content: const Text(
+        content: const TText(
           'Apakah Anda yakin ingin mengakhiri sesi merchant ini?',
           style: TextStyle(
             color: AppColors.ashGrey,
@@ -46,7 +73,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: const TText(
               'Batal',
               style: TextStyle(color: AppColors.ashGrey),
             ),
@@ -71,7 +98,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
                 );
               }
             },
-            child: const Text('Keluar'),
+            child: const TText('Keluar'),
           ),
         ],
       ),
@@ -80,20 +107,27 @@ class _SellerMainNavState extends State<SellerMainNav> {
 
   @override
   Widget build(BuildContext context) {
+    return L10nBuilder(builder: (context) => _buildShell(context));
+  }
+
+  Widget _buildShell(BuildContext context) {
     final List<Widget> pages = [
       SellerDashboardPage(
         onNavigateToInventory: () => _onTabTapped(1),
         onNavigateToDelivery: () => _onTabTapped(2),
       ),
       const SellerInventoryPage(),
-      _buildDeliveryPlaceholder(),
-      _buildProfilePlaceholder(),
+      const SellerDeliveryPage(),
+      SellerProfilePage(
+        onNavigateToInventory: () => _onTabTapped(1),
+        onOpenOnboarding: _openOnboarding,
+      ),
     ];
 
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       appBar: AppBar(
-        title: Text(
+        title: TText(
           _getAppBarTitle(_currentIndex),
           style: const TextStyle(
             letterSpacing: 2.0,
@@ -102,9 +136,16 @@ class _SellerMainNavState extends State<SellerMainNav> {
           ),
         ),
         actions: [
+          const LanguageSwitcher(),
+          IconButton(
+            icon: const Icon(Icons.help_outline_rounded,
+                color: AppColors.ashGrey, size: 20),
+            tooltip: 'Panduan Toko'.tr(context),
+            onPressed: _openOnboarding,
+          ),
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: AppColors.ashGrey, size: 20),
-            tooltip: 'Keluar',
+            tooltip: 'Keluar'.tr(context),
             onPressed: _confirmLogout,
           ),
         ],
@@ -137,26 +178,26 @@ class _SellerMainNavState extends State<SellerMainNav> {
             fontSize: 11,
             fontWeight: FontWeight.w400,
           ),
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              activeIcon: Icon(Icons.dashboard_rounded),
-              label: 'Ringkasan',
+              icon: const Icon(Icons.dashboard_outlined),
+              activeIcon: const Icon(Icons.dashboard_rounded),
+              label: 'Ringkasan'.tr(context),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2_outlined),
-              activeIcon: Icon(Icons.inventory_2_rounded),
-              label: 'Inventaris',
+              icon: const Icon(Icons.inventory_2_outlined),
+              activeIcon: const Icon(Icons.inventory_2_rounded),
+              label: 'Inventaris'.tr(context),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.local_shipping_outlined),
-              activeIcon: Icon(Icons.local_shipping_rounded),
-              label: 'Logistik',
+              icon: const Icon(Icons.local_shipping_outlined),
+              activeIcon: const Icon(Icons.local_shipping_rounded),
+              label: 'Logistik'.tr(context),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.storefront_outlined),
-              activeIcon: Icon(Icons.storefront_rounded),
-              label: 'Profil Toko',
+              icon: const Icon(Icons.storefront_outlined),
+              activeIcon: const Icon(Icons.storefront_rounded),
+              label: 'Profil Toko'.tr(context),
             ),
           ],
         ),
@@ -179,75 +220,4 @@ class _SellerMainNavState extends State<SellerMainNav> {
     }
   }
 
-  Widget _buildDeliveryPlaceholder() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.local_shipping_outlined,
-              size: 52,
-              color: AppColors.champagneGold,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Otorisasi & Logistik Pengiriman',
-              style: TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Pembaruan status armada dan verifikasi bukti terima dari pembeli',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.ashGrey,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfilePlaceholder() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.storefront_outlined,
-              size: 52,
-              color: AppColors.champagneGold,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Profil Workshop & Galeri',
-              style: TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Identitas pengrajin, lokasi galeri, dan foto profil workshop',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.ashGrey,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

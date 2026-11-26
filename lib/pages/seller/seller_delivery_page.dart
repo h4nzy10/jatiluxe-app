@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../utils/formatters.dart';
@@ -66,8 +67,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
         return s == 'Arrived' || os == 'Finished';
       }).toList();
 
-  Future<void> _updateDeliveryStatus(
-      int idDelivery, String newStatus, int index) async {
+  Future<void> _updateDeliveryStatus(int idDelivery, String newStatus) async {
     try {
       await ApiService.put('/api/v1/delivery/$idDelivery/status',
           {'delivery_status': newStatus});
@@ -106,7 +106,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
             width: 0.8,
           ),
         ),
-        content: Text(
+        content: TText(
           message,
           style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
         ),
@@ -133,7 +133,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              const TText(
                 'BUKTI PENERIMAAN BARANG',
                 style: TextStyle(
                   color: AppColors.ashGreySubtle,
@@ -164,14 +164,14 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                       ),
                     );
                   },
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     height: 160,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: AppColors.surfaceElevated,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text(
+                    child: const TText(
                       'Gagal memuat gambar bukti',
                       style: TextStyle(color: AppColors.ashGrey, fontSize: 12),
                     ),
@@ -183,7 +183,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text(
+                  child: const TText(
                     'Tutup',
                     style: TextStyle(color: AppColors.champagneGold, fontSize: 13),
                   ),
@@ -216,7 +216,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               Row(
                 children: [
                   const Expanded(
-                    child: Text(
+                    child: TText(
                       'PERBARUI STATUS ARMADA',
                       style: TextStyle(
                         color: AppColors.ashGreySubtle,
@@ -234,7 +234,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 ],
               ),
               const SizedBox(height: 6),
-              Text(
+              TText(
                 'No. Lacak  ${delivery['tracking_number'] ?? '-'}',
                 style: const TextStyle(
                   color: AppColors.ivorySilk,
@@ -254,7 +254,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                   icon: Icons.local_shipping_rounded,
                   onTap: () {
                     Navigator.pop(ctx);
-                    _updateDeliveryStatus(idDelivery, 'Out for delivery', 0);
+                    _updateDeliveryStatus(idDelivery, 'Out for delivery');
                   },
                 )
               else if (currentStatus == 'Out for delivery')
@@ -272,7 +272,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                           color: AppColors.warning, size: 18),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Text(
+                        child: TText(
                           'Menunggu konfirmasi penerimaan dari pelanggan',
                           style: TextStyle(
                             color: AppColors.ashGrey,
@@ -300,7 +300,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.surfaceBorder, width: 0.8),
         ),
-        title: const Text(
+        title: const TText(
           'Selesaikan Pesanan',
           style: TextStyle(
             color: AppColors.ivorySilk,
@@ -308,14 +308,14 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
             fontWeight: FontWeight.w600,
           ),
         ),
-        content: Text(
+        content: TText(
           'Pesanan no. $trackingNumber telah diterima dan diverifikasi. Konfirmasi untuk menyelesaikan transaksi?',
           style: const TextStyle(color: AppColors.ashGrey, fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal',
+            child: const TText('Batal',
                 style: TextStyle(color: AppColors.ashGrey)),
           ),
           ElevatedButton(
@@ -332,7 +332,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               Navigator.pop(ctx);
               _finishDelivery(idApply);
             },
-            child: const Text('Selesaikan',
+            child: const TText('Selesaikan',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
           ),
         ],
@@ -342,13 +342,17 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
 
   @override
   Widget build(BuildContext context) {
+    return L10nBuilder(builder: (context) => _buildPage(context));
+  }
+
+  Widget _buildPage(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       body: SafeArea(
         child: Column(
           children: [
             // Tab bar header
-            _buildTabHeader(),
+            _buildTabHeader(context),
 
             // Content
             Expanded(
@@ -380,7 +384,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
     );
   }
 
-  Widget _buildTabHeader() {
+  Widget _buildTabHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
       decoration: const BoxDecoration(
@@ -398,7 +402,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    const TText(
                       'MANAJEMEN ARMADA',
                       style: TextStyle(
                         color: AppColors.ashGreySubtle,
@@ -408,7 +412,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    TText(
                       '${_activeDeliveries.length} pengiriman aktif',
                       style: const TextStyle(
                         color: AppColors.ivorySilk,
@@ -423,7 +427,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 onPressed: _fetchDeliveries,
                 icon: const Icon(Icons.sync_rounded,
                     color: AppColors.ashGrey, size: 20),
-                tooltip: 'Muat ulang',
+                tooltip: 'Muat ulang'.tr(context),
               ),
             ],
           ),
@@ -465,7 +469,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, i) => _buildDeliveryCard(items[i]),
       ),
     );
@@ -479,7 +483,6 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
     final productsSummary = d['products_summary'] ?? '-';
     final totalPrice = d['total_price'];
     final orderId = d['id_order'];
-    final idDelivery = d['id_delivery'];
     final idApply = d['id_apply'];
     final proofUrl = d['proof'];
     final applyStatus = d['apply_status'];
@@ -495,7 +498,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isFinished
-              ? AppColors.warmBronze.withOpacity(0.3)
+              ? AppColors.warmBronze.withValues(alpha: 0.3)
               : AppColors.surfaceBorder,
           width: 0.8,
         ),
@@ -542,7 +545,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      TText(
                         'Pesanan #$orderId · $customerName',
                         style: const TextStyle(
                           color: AppColors.ivorySilk,
@@ -553,7 +556,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                       if (orderDate != null) ...[
                         const SizedBox(height: 2),
                         Text(
-                          DateFormatHelper.toLocale(orderDate.toString()),
+                          DateFormatHelper.toReadable(orderDate.toString()),
                           style: const TextStyle(
                             color: AppColors.ashGreySubtle,
                             fontSize: 11,
@@ -581,7 +584,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      const TText(
                         'PRODUK',
                         style: TextStyle(
                           color: AppColors.ashGreySubtle,
@@ -608,7 +611,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text(
+                    const TText(
                       'NILAI',
                       style: TextStyle(
                         color: AppColors.ashGreySubtle,
@@ -647,7 +650,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        const TText(
                           'Bukti penerimaan dari pelanggan',
                           style: TextStyle(
                             color: AppColors.ivorySilk,
@@ -656,7 +659,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                           ),
                         ),
                         if (applyStatus != null)
-                          Text(
+                          TText(
                             'Status: $applyStatus',
                             style: const TextStyle(
                               color: AppColors.ashGrey,
@@ -672,7 +675,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 6),
                     ),
-                    child: const Text(
+                    child: const TText(
                       'Lihat Foto',
                       style: TextStyle(
                         color: AppColors.champagneGold,
@@ -713,7 +716,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                             Icon(Icons.edit_road_rounded,
                                 size: 15, color: AppColors.ashGrey),
                             SizedBox(width: 6),
-                            Text(
+                            TText(
                               'Perbarui Status',
                               style: TextStyle(
                                 fontSize: 12,
@@ -740,7 +743,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                         ),
                         onPressed: () => _showFinishConfirmDialog(
                             idApply, trackingNo),
-                        child: const Text(
+                        child: const TText(
                           'Selesaikan',
                           style: TextStyle(
                             fontSize: 12,
@@ -760,17 +763,17 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.08),
+                color: AppColors.success.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AppColors.success.withOpacity(0.25), width: 0.8),
+                    color: AppColors.success.withValues(alpha: 0.25), width: 0.8),
               ),
               child: Row(
                 children: const [
                   Icon(Icons.check_circle_outline_rounded,
                       color: AppColors.success, size: 15),
                   SizedBox(width: 8),
-                  Text(
+                  TText(
                     'Transaksi selesai — Barang diterima kolektor',
                     style: TextStyle(
                       color: AppColors.success,
@@ -809,11 +812,11 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.35), width: 0.8),
+        border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),
       ),
-      child: Text(
+      child: TText(
         label,
         style: TextStyle(
           color: color,
@@ -877,7 +880,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               ),
             ),
             const SizedBox(height: 6),
-            Text(
+            TText(
               _stageShortLabel(stages[stageIdx]),
               style: TextStyle(
                 color: color,
@@ -926,7 +929,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
         children: [
           Icon(icon, size: 16),
           const SizedBox(width: 8),
-          Text(
+          TText(
             label,
             style: const TextStyle(
               fontSize: 13,
@@ -953,7 +956,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               color: AppColors.ashGreySubtle,
             ),
             const SizedBox(height: 16),
-            Text(
+            TText(
               isActive
                   ? 'Tidak ada pengiriman aktif'
                   : 'Belum ada pesanan selesai',
@@ -964,7 +967,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            TText(
               isActive
                   ? 'Pesanan yang sedang dalam proses pengiriman akan muncul di sini'
                   : 'Transaksi yang telah selesai dan diterima kolektor akan tercatat di sini',
@@ -991,7 +994,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
             const Icon(Icons.wifi_off_rounded,
                 size: 40, color: AppColors.ashGreySubtle),
             const SizedBox(height: 16),
-            const Text(
+            const TText(
               'Gagal memuat data logistik',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -1000,7 +1003,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            TText(
               _errorMessage ?? '',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.ashGrey, fontSize: 12),
@@ -1014,7 +1017,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('Coba Lagi'),
+              child: const TText('Coba Lagi'),
             ),
           ],
         ),

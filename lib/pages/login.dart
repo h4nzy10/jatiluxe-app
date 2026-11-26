@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../constants/theme.dart';
 import '../service/api.dart';
 import 'customer/customer_main_nav.dart';
@@ -20,15 +23,34 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
+  static const int _maxAttempts = 5;
+  static const Duration _lockDuration = Duration(seconds: 30);
+
+  int _failedAttempts = 0;
+  DateTime? _lockedUntil;
+  int _remainingSeconds = 0;
+  Timer? _countdownTimer;
+
   @override
   void dispose() {
+    _countdownTimer?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  bool get _isLocked =>
+      _lockedUntil != null && DateTime.now().isBefore(_lockedUntil!);
+
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_isLocked) {
+      _showErrorSnackBar(
+        'Login ditunda karena terlalu banyak percobaan gagal. Coba lagi dalam $_remainingSeconds detik.',
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -52,6 +74,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
+      _failedAttempts = 0;
+      _lockedUntil = null;
+
       final user = profileResponse['user'];
       final role = user?['role']?.toString().toLowerCase();
 
@@ -71,12 +96,79 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       if (!mounted) return;
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
-      _showErrorSnackBar(errorMsg);
+      _handleFailedLogin(errorMsg);
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _handleFailedLogin(String message) {
+    final isRateLimited = message.contains('Terlalu banyak percobaan') ||
+        message.contains('429');
+
+    if (isRateLimited) {
+      final parsedSeconds = int.tryParse(
+            RegExp(r'(\d+) detik').firstMatch(message)?.group(1) ?? '',
+          ) ??
+          _lockDuration.inSeconds;
+      _startLock(seconds: parsedSeconds);
+      _showErrorSnackBar(message);
+      return;
+    }
+
+    final isCredentialError = message.contains('Login failed') ||
+        message.contains('kata sandi') ||
+        message.contains('salah');
+
+    if (!isCredentialError) {
+      _showErrorSnackBar(message);
+      return;
+    }
+
+    _failedAttempts += 1;
+
+    if (_failedAttempts >= _maxAttempts) {
+      _startLock();
+      _showErrorSnackBar(
+        'Terlalu banyak kata sandi salah. Login ditunda selama ${_lockDuration.inSeconds} detik.',
+      );
+      return;
+    }
+
+    _showErrorSnackBar(
+      'Email atau kata sandi salah. ${_maxAttempts - _failedAttempts} percobaan tersisa.',
+    );
+  }
+
+  void _startLock({int? seconds}) {
+    if (!mounted) return;
+    final lockSeconds = seconds ?? _lockDuration.inSeconds;
+    _lockedUntil = DateTime.now().add(Duration(seconds: lockSeconds));
+    _remainingSeconds = lockSeconds;
+    _countdownTimer?.cancel();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final left = _lockedUntil!.difference(DateTime.now()).inSeconds;
+      if (left <= 0) {
+        timer.cancel();
+        _countdownTimer = null;
+        setState(() {
+          _lockedUntil = null;
+          _remainingSeconds = 0;
+          _failedAttempts = 0;
+        });
+        return;
+      }
+
+      setState(() => _remainingSeconds = left);
+    });
+    setState(() {});
   }
 
   void _showErrorSnackBar(String message) {
@@ -87,14 +179,17 @@ class _LoginPageState extends State<LoginPage> {
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppColors.error.withOpacity(0.6), width: 0.8),
+          side: BorderSide(
+            color: AppColors.error.withValues(alpha: 0.6),
+            width: 0.8,
+          ),
         ),
         content: Row(
           children: [
             const Icon(Icons.info_outline, color: AppColors.error, size: 20),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
+              child: TText(
                 message,
                 style: const TextStyle(
                   color: AppColors.ivorySilk,
@@ -122,13 +217,18 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const Align(
+                    alignment: Alignment.topRight,
+                    child: LanguageSwitcher(),
+                  ),
+                  const SizedBox(height: 8),
                   // Subtle top brand mark
                   Center(
                     child: Image.asset(
                       'assets/images/logo.png',
                       width: 44,
                       height: 44,
-                      errorBuilder: (_, __, ___) => CustomPaint(
+                      errorBuilder: (_, _, _) => CustomPaint(
                         size: const Size(38, 38),
                         painter: _ArtisanMiniMark(color: AppColors.champagneGold),
                       ),
@@ -136,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 16),
                   const Center(
-                    child: Text(
+                    child: TText(
                       'J A T I L U X E',
                       style: TextStyle(
                         color: AppColors.champagneGold,
@@ -150,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 36),
 
                   // Heading
-                  const Text(
+                  const TText(
                     'Welcome Back',
                     style: TextStyle(
                       color: AppColors.ivorySilk,
@@ -160,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
+                  const TText(
                     'Log in to explore the best teak furniture works',
                     style: TextStyle(
                       color: AppColors.ashGrey,
@@ -172,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 32),
 
                   // Email Field
-                  const Text(
+                  const TText(
                     'Email',
                     style: TextStyle(
                       color: AppColors.ivorySilk,
@@ -209,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
 
                   // Password Field
-                  const Text(
+                  const TText(
                     'Password',
                     style: TextStyle(
                       color: AppColors.ivorySilk,
@@ -262,11 +362,12 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleLogin,
+                      onPressed: _isLoading || _isLocked ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.champagneGold,
                         foregroundColor: AppColors.obsidianBlack,
-                        disabledBackgroundColor: AppColors.champagneGold.withOpacity(0.4),
+                        disabledBackgroundColor:
+                            AppColors.champagneGold.withValues(alpha: 0.4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -282,9 +383,9 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             )
-                          : const Text(
-                              'Login',
-                              style: TextStyle(
+                          : TText(
+                              _isLocked ? 'Tunggu $_remainingSeconds detik' : 'Login',
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.8,
@@ -293,13 +394,40 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
+                  if (_isLocked)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TText(
+                        'Terlalu banyak percobaan gagal. Login kembali dalam $_remainingSeconds detik.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.warning,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  else if (_failedAttempts > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TText(
+                        'Percobaan gagal: $_failedAttempts/$_maxAttempts',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _failedAttempts >= _maxAttempts - 1
+                              ? AppColors.warning
+                              : AppColors.ashGrey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+
                   const SizedBox(height: 28),
 
                   // Register Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      const TText(
                         'Don\'t have account? ',
                         style: TextStyle(
                           color: AppColors.ashGrey,
@@ -315,7 +443,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: const TText(
                           'Register Now',
                           style: TextStyle(
                             color: AppColors.champagneGoldLight,

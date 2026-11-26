@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
@@ -100,6 +101,10 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    return L10nBuilder(builder: (context) => _buildPage(context));
+  }
+
+  Widget _buildPage(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       body: SafeArea(
@@ -128,7 +133,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildWorkshopHeader(),
+                          _buildWorkshopHeader(context),
                           const SizedBox(height: 28),
                           _buildRevenueLedger(),
                           const SizedBox(height: 28),
@@ -172,7 +177,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              const TText(
                 'Foto Profil Workshop / Galeri',
                 style: TextStyle(
                   color: AppColors.ivorySilk,
@@ -183,12 +188,12 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.camera_alt_outlined, color: AppColors.champagneGold),
-                title: const Text('Ambil dari Kamera', style: TextStyle(color: AppColors.ivorySilk)),
+                title: const TText('Ambil dari Kamera', style: TextStyle(color: AppColors.ivorySilk)),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined, color: AppColors.champagneGold),
-                title: const Text('Pilih dari Galeri', style: TextStyle(color: AppColors.ivorySilk)),
+                title: const TText('Pilih dari Galeri', style: TextStyle(color: AppColors.ivorySilk)),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
             ],
@@ -231,7 +236,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               borderRadius: BorderRadius.circular(10),
               side: const BorderSide(color: AppColors.champagneGold, width: 0.8),
             ),
-            content: const Text(
+            content: const TText(
               'Profile picture successfully updated',
               style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
@@ -248,7 +253,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
             borderRadius: BorderRadius.circular(10),
             side: const BorderSide(color: AppColors.error, width: 0.8),
           ),
-          content: Text(
+          content: TText(
             'Gagal mengunggah foto: ${e.toString().replaceFirst('Exception: ', '')}',
             style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
           ),
@@ -262,7 +267,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
   }
 
   /// Atelier / Workshop Header with quiet luxury elegance
-  Widget _buildWorkshopHeader() {
+  Widget _buildWorkshopHeader(BuildContext context) {
     final cleanUrl = _getCleanImageUrl(_sellerAvatar);
 
     return Row(
@@ -319,7 +324,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                                   ),
                                 );
                               },
-                              errorBuilder: (_, __, ___) => _buildMonogram(),
+                              errorBuilder: (_, _, _) => _buildMonogram(),
                             )
                           : _buildMonogram(),
                 ),
@@ -404,7 +409,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
             color: AppColors.ashGrey,
             size: 20,
           ),
-          tooltip: 'Sinkronisasi Data',
+          tooltip: 'Sinkronisasi Data'.tr(context),
         ),
       ],
     );
@@ -440,7 +445,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          const TText(
             'TOTAL PENDAPATAN TERVERIFIKASI',
             style: TextStyle(
               color: AppColors.ashGreySubtle,
@@ -460,7 +465,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          TText(
             '${_salesList.length} pesanan telah selesai dan diterima kolektor',
             style: const TextStyle(
               color: AppColors.ashGrey,
@@ -496,7 +501,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    const TText(
                       'KOLEKSI AKTIF',
                       style: TextStyle(
                         color: AppColors.ashGreySubtle,
@@ -506,7 +511,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(
+                    TText(
                       '$_productCount Desain',
                       style: const TextStyle(
                         color: AppColors.ivorySilk,
@@ -515,7 +520,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    const TText(
                       'Terdaftar di etalase',
                       style: TextStyle(
                         color: AppColors.ashGrey,
@@ -544,7 +549,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    const TText(
                       'TOTAL STOK KAYU',
                       style: TextStyle(
                         color: AppColors.ashGreySubtle,
@@ -554,7 +559,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(
+                    TText(
                       '$_totalStockUnits Unit',
                       style: const TextStyle(
                         color: AppColors.ivorySilk,
@@ -563,7 +568,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    const TText(
                       'Siap diproses & dikirim',
                       style: TextStyle(
                         color: AppColors.ashGrey,
@@ -585,7 +590,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        const TText(
           'MANAJEMEN ETALASE & OPERASIONAL',
           style: TextStyle(
             color: AppColors.ashGreySubtle,
@@ -635,7 +640,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  TText(
                     title,
                     style: const TextStyle(
                       color: AppColors.ivorySilk,
@@ -645,7 +650,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                     ),
                   ),
                   const SizedBox(height: 3),
-                  Text(
+                  TText(
                     subtitle,
                     style: const TextStyle(
                       color: AppColors.ashGrey,
@@ -671,17 +676,17 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.charcoalVelvet.withOpacity(0.5),
+        color: AppColors.charcoalVelvet.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: AppColors.warmBronze.withOpacity(0.25),
+          color: AppColors.warmBronze.withValues(alpha: 0.25),
           width: 0.8,
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
-          Text(
+          TText(
             '✦',
             style: TextStyle(
               color: AppColors.champagneGold,
@@ -690,7 +695,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
           ),
           SizedBox(width: 12),
           Expanded(
-            child: Text(
+            child: TText(
               'Standar JatiLuxe: Setiap produk kayu jati yang didaftarkan wajib mencantumkan jenis jati (TPK Perhutani / Jati Emas) serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.',
               style: TextStyle(
                 color: AppColors.ashGrey,
@@ -713,7 +718,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            const TText(
               'BUKU TRANSAKSI PENJUALAN',
               style: TextStyle(
                 color: AppColors.ashGreySubtle,
@@ -722,7 +727,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                 letterSpacing: 2.0,
               ),
             ),
-            Text(
+            TText(
               '${_salesList.length} Transaksi',
               style: const TextStyle(
                 color: AppColors.ashGrey,
@@ -746,7 +751,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               ),
             ),
             child: const Center(
-              child: Text(
+              child: TText(
                 'Belum ada riwayat transaksi penjualan terbayar',
                 style: TextStyle(
                   color: AppColors.ashGrey,
@@ -769,7 +774,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _salesList.length,
-              separatorBuilder: (_, __) => const Divider(
+              separatorBuilder: (_, _) => const Divider(
                 color: AppColors.surfaceBorder,
                 height: 1,
                 thickness: 0.8,
@@ -796,7 +801,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                         children: [
                           Row(
                             children: [
-                              Text(
+                              TText(
                                 'Pesanan #$orderId',
                                 style: const TextStyle(
                                   color: AppColors.ivorySilk,
@@ -805,7 +810,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Text(
+                              TText(
                                 '•  $orderStatus',
                                 style: const TextStyle(
                                   color: AppColors.champagneGold,
@@ -816,7 +821,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
                             ],
                           ),
                           const SizedBox(height: 3),
-                          Text(
+                          TText(
                             '${DateFormatHelper.toReadable(date)} • $method',
                             style: const TextStyle(
                               color: AppColors.ashGrey,
@@ -852,7 +857,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            const TText(
               'Gagal Memuat Data',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -861,7 +866,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
+            TText(
               _errorMessage ?? 'Periksa koneksi server Anda',
               textAlign: TextAlign.center,
               style: const TextStyle(
@@ -873,7 +878,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
             TextButton.icon(
               onPressed: _fetchDashboardData,
               icon: const Icon(Icons.refresh, size: 16, color: AppColors.champagneGold),
-              label: const Text(
+              label: const TText(
                 'Muat Ulang',
                 style: TextStyle(color: AppColors.champagneGold),
               ),

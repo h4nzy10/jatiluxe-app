@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import '../constants/theme.dart';
 import '../service/api.dart';
 import 'login.dart';
@@ -102,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
               size: 24,
             ),
             const SizedBox(width: 10),
-            const Text(
+            const TText(
               'Register Successfuly',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -112,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ],
         ),
-        content: Text(
+        content: TText(
           message,
           style: const TextStyle(
             color: AppColors.ashGrey,
@@ -138,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 (route) => false,
               );
             },
-            child: const Text('Login Now'),
+            child: const TText('Login Now'),
           ),
         ],
       ),
@@ -153,14 +154,17 @@ class _RegisterPageState extends State<RegisterPage> {
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppColors.error.withOpacity(0.6), width: 0.8),
+          side: BorderSide(
+            color: AppColors.error.withValues(alpha: 0.6),
+            width: 0.8,
+          ),
         ),
         content: Row(
           children: [
             const Icon(Icons.info_outline, color: AppColors.error, size: 20),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
+              child: TText(
                 message,
                 style: const TextStyle(
                   color: AppColors.ivorySilk,
@@ -179,11 +183,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       appBar: AppBar(
-        title: const Text('J A T I L U X E'),
+        title: const TText('J A T I L U X E'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: const [LanguageSwitcher()],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -194,7 +199,7 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header Title
-                Text(
+                TText(
                   _isSeller ? 'Register As Seller' : 'Register As Customer',
                   style: const TextStyle(
                     color: AppColors.ivorySilk,
@@ -203,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
+                TText(
                   _isSeller
                       ? 'Open a digital showcase and market quality teak furniture works directly to collectors.'
                       : 'Join to explore and order premium Jepara teak furniture.',
@@ -255,7 +260,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       : AppColors.ashGrey,
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
+                                TText(
                                   'Customer',
                                   style: TextStyle(
                                     fontSize: 13,
@@ -299,7 +304,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       : AppColors.ashGrey,
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
+                                TText(
                                   'Seller',
                                   style: TextStyle(
                                     fontSize: 13,
@@ -483,7 +488,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.champagneGold,
                       foregroundColor: AppColors.obsidianBlack,
-                      disabledBackgroundColor: AppColors.champagneGold.withOpacity(0.4),
+                      disabledBackgroundColor:
+                          AppColors.champagneGold.withValues(alpha: 0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -499,7 +505,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           )
-                        : Text(
+                        : TText(
                             _isSeller ? 'Register As Seller' : 'Register Account',
                             style: const TextStyle(
                               fontSize: 15,
@@ -516,7 +522,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    const TText(
                       'Already have an account? ',
                       style: TextStyle(
                         color: AppColors.ashGrey,
@@ -532,7 +538,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         );
                       },
-                      child: const Text(
+                      child: const TText(
                         'Login Now',
                         style: TextStyle(
                           color: AppColors.champagneGoldLight,
@@ -555,7 +561,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildFieldLabel(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
+      child: TText(
         label,
         style: const TextStyle(
           color: AppColors.ivorySilk,

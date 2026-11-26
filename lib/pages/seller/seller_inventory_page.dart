@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
@@ -158,7 +159,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
           borderRadius: BorderRadius.circular(14),
           side: const BorderSide(color: AppColors.surfaceBorder, width: 0.8),
         ),
-        title: const Text(
+        title: const TText(
           'Delete Karya Jati',
           style: TextStyle(
             color: AppColors.ivorySilk,
@@ -166,7 +167,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        content: Text(
+        content: TText(
           'Apakah Anda yakin ingin menghapus "$productName" dari katalog inventaris toko?',
           style: const TextStyle(
             color: AppColors.ashGrey,
@@ -177,7 +178,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal', style: TextStyle(color: AppColors.ashGrey)),
+            child: const TText('Batal', style: TextStyle(color: AppColors.ashGrey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -185,7 +186,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
               foregroundColor: AppColors.ivorySilk,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Hapus'),
+            child: const TText('Hapus'),
           ),
         ],
       ),
@@ -200,7 +201,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
           const SnackBar(
             backgroundColor: AppColors.charcoalVelvet,
             behavior: SnackBarBehavior.floating,
-            content: Text(
+            content: TText(
               'Produk berhasil dihapus dari etalase',
               style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
@@ -214,7 +215,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
           SnackBar(
             backgroundColor: AppColors.charcoalVelvet,
             behavior: SnackBarBehavior.floating,
-            content: Text(
+            content: TText(
               'Gagal menghapus: ${e.toString().replaceFirst('Exception: ', '')}',
               style: const TextStyle(color: AppColors.error, fontSize: 13),
             ),
@@ -226,38 +227,40 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.obsidianBlack,
-      body: SafeArea(
-        child: RefreshIndicator(
-          color: AppColors.champagneGold,
-          backgroundColor: AppColors.charcoalVelvet,
-          onRefresh: _fetchProducts,
-          child: Column(
-            children: [
-              _buildTopBar(),
-              _buildSearchAndFilters(),
-              Expanded(
-                child: _isLoading
-                    ? const Center(
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.8,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.champagneGold,
+    return L10nBuilder(
+      builder: (context) => Scaffold(
+        backgroundColor: AppColors.obsidianBlack,
+        body: SafeArea(
+          child: RefreshIndicator(
+            color: AppColors.champagneGold,
+            backgroundColor: AppColors.charcoalVelvet,
+            onRefresh: _fetchProducts,
+            child: Column(
+              children: [
+                _buildTopBar(),
+                _buildSearchAndFilters(),
+                Expanded(
+                  child: _isLoading
+                      ? const Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.8,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.champagneGold,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    : _errorMessage != null
-                        ? _buildErrorView()
-                        : _filteredProducts.isEmpty
-                            ? _buildEmptyView()
-                            : _buildProductList(),
-              ),
-            ],
+                        )
+                      : _errorMessage != null
+                          ? _buildErrorView()
+                          : _filteredProducts.isEmpty
+                              ? _buildEmptyView()
+                              : _buildProductList(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -273,7 +276,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              const TText(
                 'KATALOG & INVENTARIS',
                 style: TextStyle(
                   color: AppColors.ashGreySubtle,
@@ -283,7 +286,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
+              TText(
                 '${_products.length} Desain Terdaftar',
                 style: const TextStyle(
                   color: AppColors.ivorySilk,
@@ -296,7 +299,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
           ElevatedButton.icon(
             onPressed: () => _openProductForm(),
             icon: const Icon(Icons.add, size: 16),
-            label: const Text('Tambah Karya'),
+            label: const TText('Tambah Karya'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.champagneGold,
               foregroundColor: AppColors.obsidianBlack,
@@ -327,7 +330,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
             style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             cursorColor: AppColors.champagneGold,
             decoration: InputDecoration(
-              hintText: 'Cari nama mebel, ukiran, atau kategori...',
+              hintText: 'Cari nama mebel, ukiran, atau kategori...'.tr(context),
               prefixIcon: const Icon(
                 Icons.search_rounded,
                 color: AppColors.ashGreySubtle,
@@ -351,7 +354,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 4),
             scrollDirection: Axis.horizontal,
             itemCount: _categoryFilters.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final category = _categoryFilters[index];
               final isSelected = _selectedCategoryFilter == category;
@@ -373,7 +376,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                     ),
                   ),
                   child: Center(
-                    child: Text(
+                    child: TText(
                       category,
                       style: TextStyle(
                         color: isSelected ? AppColors.obsidianBlack : AppColors.ashGrey,
@@ -396,7 +399,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       itemCount: _filteredProducts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final p = _filteredProducts[index];
         final idProduct = p['id_product'];
@@ -451,7 +454,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                               ),
                             );
                           },
-                          errorBuilder: (_, __, ___) => const Center(
+                          errorBuilder: (_, _, _) => const Center(
                             child: Icon(Icons.broken_image_outlined, color: AppColors.ashGreySubtle, size: 24),
                           ),
                         )
@@ -470,7 +473,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                     // Category & Wood badge
                     Row(
                       children: [
-                        Text(
+                        TText(
                           category.toUpperCase(),
                           style: const TextStyle(
                             color: AppColors.champagneGold,
@@ -480,7 +483,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Text(
+                        TText(
                           '•  $woodType',
                           style: const TextStyle(
                             color: AppColors.ashGrey,
@@ -492,7 +495,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                     const SizedBox(height: 4),
 
                     // Product Name
-                    Text(
+                    TText(
                       name,
                       style: const TextStyle(
                         color: AppColors.ivorySilk,
@@ -525,10 +528,10 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
                           decoration: BoxDecoration(
                             color: stock > 0
                                 ? AppColors.surfaceElevated
-                                : AppColors.error.withOpacity(0.12),
+                                : AppColors.error.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Text(
+                          child: TText(
                             stock > 0 ? 'Stok: $stock Unit' : 'Stok Habis',
                             style: TextStyle(
                               color: stock > 0 ? AppColors.ashGrey : AppColors.error,
@@ -589,7 +592,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
               color: AppColors.ashGreySubtle,
             ),
             const SizedBox(height: 14),
-            const Text(
+            const TText(
               'Belum Ada Koleksi Jati',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -598,7 +601,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            const TText(
               'Mulai daftarkan karya furnitur kayu jati Anda ke etalase untuk dilihat para kolektor.',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -611,7 +614,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
             ElevatedButton.icon(
               onPressed: () => _openProductForm(),
               icon: const Icon(Icons.add, size: 16),
-              label: const Text('Tambah Karya Pertama'),
+              label: const TText('Tambah Karya Pertama'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.champagneGold,
                 foregroundColor: AppColors.obsidianBlack,
@@ -630,7 +633,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            const TText(
               'Gagal Memuat Inventaris',
               style: TextStyle(
                 color: AppColors.ivorySilk,
@@ -639,7 +642,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
+            TText(
               _errorMessage ?? 'Periksa koneksi server Anda',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.ashGrey, fontSize: 12),
@@ -648,7 +651,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
             TextButton.icon(
               onPressed: _fetchProducts,
               icon: const Icon(Icons.refresh, size: 16, color: AppColors.champagneGold),
-              label: const Text('Muat Ulang', style: TextStyle(color: AppColors.champagneGold)),
+              label: const TText('Muat Ulang', style: TextStyle(color: AppColors.champagneGold)),
             ),
           ],
         ),
@@ -688,46 +691,92 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
 
   bool _isSaving = false;
 
-  late final List<Map<String, dynamic>> _categories;
+  late List<Map<String, dynamic>> _categories;
 
-  final List<String> _woodTypes = [
+  List<String> _woodTypes = [
     'Jati TPK Perhutani',
+    'Jati TPK Rakyat',
     'Jati Emas',
     'Jati Belanda',
     'Jati Jawa Kuno',
+    'Jati Jawa',
+    'Jati Madura',
+    'Jati Muna',
+    'Jati Sulawesi',
+    'Jati Kuning',
+    'Mahoni',
+    'Trembesi',
+    'Sengon',
+    'Mindi',
+    'Sungkai',
+    'Ulin',
+    'Bengkirai',
+    'Meranti',
+    'Nyatoh',
+    'Kamper',
   ];
 
   @override
   void initState() {
     super.initState();
-    _categories = widget.categories.isNotEmpty
-        ? widget.categories
-        : [
-            {'id_category': 1, 'category': 'Kursi & Sofa'},
-            {'id_category': 2, 'category': 'Meja'},
-            {'id_category': 3, 'category': 'Lemari & Rak'},
-            {'id_category': 4, 'category': 'Tempat Tidur'},
-            {'id_category': 5, 'category': 'Dekorasi & Ukir'},
-          ];
+    _categories = List<Map<String, dynamic>>.from(
+      widget.categories.isNotEmpty
+          ? widget.categories
+          : [
+              {'id_category': 1, 'category': 'Kursi & Sofa'},
+              {'id_category': 2, 'category': 'Meja'},
+              {'id_category': 3, 'category': 'Lemari & Rak'},
+              {'id_category': 4, 'category': 'Tempat Tidur'},
+              {'id_category': 5, 'category': 'Dekorasi & Ukir'},
+            ],
+    );
 
     final p = widget.existingProduct;
     _nameController = TextEditingController(text: p?['product_name'] ?? '');
     _priceController = TextEditingController(text: p?['price']?.toString() ?? '');
     _stockController = TextEditingController(text: p?['stock']?.toString() ?? '1');
     _descController = TextEditingController(text: p?['description'] ?? '');
-    _existingPictureUrl = p?['picture'];
+
+    final rawPicture = p?['picture']?.toString().trim();
+    _existingPictureUrl = rawPicture != null && rawPicture.startsWith('http://')
+        ? 'https://${rawPicture.substring(7)}'
+        : rawPicture;
 
     if (p != null) {
-      final catId = int.tryParse(p['id_category']?.toString() ?? '1') ?? 1;
-      final exists = _categories.any((c) {
-        final cid = int.tryParse(c['id_category']?.toString() ?? c['id']?.toString() ?? '0');
-        return cid == catId;
-      });
-      _selectedCategoryId = exists ? catId : (int.tryParse(_categories.first['id_category']?.toString() ?? '1') ?? 1);
-      _selectedWoodType = p['wood_type'] ?? _woodTypes.first;
+      // Keep the product's own category selectable even when it is missing
+      // from the category list (otherwise DropdownButtonFormField asserts).
+      final catId = int.tryParse(p['id_category']?.toString() ?? '') ?? 0;
+      final categoryExists = catId != 0 && _categories.any((c) => _categoryIdOf(c) == catId);
+      if (catId != 0 && !categoryExists) {
+        _categories = [
+          ..._categories,
+          {
+            'id_category': catId,
+            'category': (p['category'] ?? 'Kategori saat ini').toString(),
+          },
+        ];
+      }
+      _selectedCategoryId =
+          catId != 0 ? catId : _categoryIdOf(_categories.first);
+
+      // Same guard for wood type: legacy products may use a value outside
+      // the default options, which would crash the dropdown on open.
+      final wood = (p['wood_type'] ?? '').toString().trim();
+      if (wood.isNotEmpty && !_woodTypes.contains(wood)) {
+        _woodTypes = [..._woodTypes, wood];
+      }
+      _selectedWoodType = wood.isNotEmpty ? wood : _woodTypes.first;
     } else {
-      _selectedCategoryId = int.tryParse(_categories.first['id_category']?.toString() ?? '1') ?? 1;
+      _selectedCategoryId = _categoryIdOf(_categories.first);
+      _selectedWoodType = _woodTypes.first;
     }
+  }
+
+  int _categoryIdOf(Map<String, dynamic> category) {
+    return int.tryParse(
+          category['id_category']?.toString() ?? category['id']?.toString() ?? '',
+        ) ??
+        1;
   }
 
   @override
@@ -767,7 +816,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt_outlined, color: AppColors.champagneGold),
-                title: const Text('Ambil Foto Kamera', style: TextStyle(color: AppColors.ivorySilk)),
+                title: const TText('Ambil Foto Kamera', style: TextStyle(color: AppColors.ivorySilk)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.camera);
@@ -775,7 +824,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined, color: AppColors.champagneGold),
-                title: const Text('Pilih dari Galeri', style: TextStyle(color: AppColors.ivorySilk)),
+                title: const TText('Pilih dari Galeri', style: TextStyle(color: AppColors.ivorySilk)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.gallery);
@@ -798,7 +847,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
         const SnackBar(
           backgroundColor: AppColors.charcoalVelvet,
           behavior: SnackBarBehavior.floating,
-          content: Text(
+          content: TText(
             'Foto karya mebel jati wajib diunggah',
             style: TextStyle(color: AppColors.error, fontSize: 13),
           ),
@@ -816,8 +865,6 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
       'price': _priceController.text.trim(),
       'stock': _stockController.text.trim(),
       'description': _descController.text.trim(),
-      if (isEdit && _pickedImage == null && _existingPictureUrl != null)
-        'picture': _existingPictureUrl!,
     };
 
     try {
@@ -851,7 +898,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
               borderRadius: BorderRadius.circular(10),
               side: const BorderSide(color: AppColors.champagneGold, width: 0.8),
             ),
-            content: Text(
+            content: TText(
               isEdit
                   ? 'Karya jati berhasil diperbarui'
                   : 'Karya mebel jati berhasil didaftarkan ke etalase',
@@ -871,7 +918,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
               borderRadius: BorderRadius.circular(10),
               side: const BorderSide(color: AppColors.error, width: 0.8),
             ),
-            content: Text(
+            content: TText(
               'Gagal menyimpan: ${e.toString().replaceFirst('Exception: ', '')}',
               style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
@@ -888,7 +935,12 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.existingProduct != null;
+    return L10nBuilder(
+      builder: (context) => _buildSheet(context, isEdit),
+    );
+  }
 
+  Widget _buildSheet(BuildContext context, bool isEdit) {
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -907,7 +959,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  TText(
                     isEdit ? 'Perbarui Karya Jati' : 'Tambah Karya Jati Baru',
                     style: const TextStyle(
                       color: AppColors.ivorySilk,
@@ -971,12 +1023,12 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                               children: const [
                                 Icon(Icons.add_photo_alternate_outlined, color: AppColors.champagneGold, size: 36),
                                 SizedBox(height: 8),
-                                Text(
+                                TText(
                                   'Unggah Foto Mebel Jati',
                                   style: TextStyle(color: AppColors.ivorySilk, fontSize: 13, fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(height: 2),
-                                Text(
+                                TText(
                                   'Foto pencahayaan alami beresolusi tinggi',
                                   style: TextStyle(color: AppColors.ashGreySubtle, fontSize: 11),
                                 ),
@@ -993,10 +1045,12 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                 controller: _nameController,
                 style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
                 cursorColor: AppColors.champagneGold,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: Meja Makan Jati Solid Trembesi',
+                decoration: InputDecoration(
+                  hintText: 'Contoh: Meja Makan Jati Solid Trembesi'.tr(context),
                 ),
-                validator: (val) => val == null || val.trim().isEmpty ? 'Nama wajib diisi' : null,
+                validator: (val) => val == null || val.trim().isEmpty
+                    ? 'Nama wajib diisi'.tr(context)
+                    : null,
               ),
 
               const SizedBox(height: 14),
@@ -1010,14 +1064,14 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                       children: [
                         _buildFieldLabel('Kategori'),
                         DropdownButtonFormField<int>(
-                          value: _selectedCategoryId,
+                          initialValue: _selectedCategoryId,
                           dropdownColor: AppColors.surfaceElevated,
                           style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           ),
                           items: _categories.map((c) {
-                            final id = int.tryParse(c['id_category']?.toString() ?? c['id']?.toString() ?? '1') ?? 1;
+                            final id = _categoryIdOf(c);
                             final name = (c['category'] ?? c['name'] ?? 'Kategori').toString();
                             return DropdownMenuItem<int>(
                               value: id,
@@ -1036,9 +1090,9 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildFieldLabel('Jenis Kayu Jati'),
+                        _buildFieldLabel('Jenis Kayu'),
                         DropdownButtonFormField<String>(
-                          value: _selectedWoodType,
+                          initialValue: _selectedWoodType,
                           dropdownColor: AppColors.surfaceElevated,
                           style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
                           decoration: const InputDecoration(
@@ -1078,9 +1132,13 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                           cursorColor: AppColors.champagneGold,
                           decoration: const InputDecoration(hintText: '12500000'),
                           validator: (val) {
-                            if (val == null || val.trim().isEmpty) return 'Harga wajib diisi';
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Harga wajib diisi'.tr(context);
+                            }
                             final numVal = num.tryParse(val.trim());
-                            if (numVal == null || numVal <= 0) return 'Harga tidak valid';
+                            if (numVal == null || numVal <= 0) {
+                              return 'Harga tidak valid'.tr(context);
+                            }
                             return null;
                           },
                         ),
@@ -1100,9 +1158,13 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                           cursorColor: AppColors.champagneGold,
                           decoration: const InputDecoration(hintText: '1'),
                           validator: (val) {
-                            if (val == null || val.trim().isEmpty) return 'Stok wajib';
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Stok wajib'.tr(context);
+                            }
                             final intVal = int.tryParse(val.trim());
-                            if (intVal == null || intVal < 0) return 'Stok >= 0';
+                            if (intVal == null || intVal < 0) {
+                              return 'Stok >= 0'.tr(context);
+                            }
                             return null;
                           },
                         ),
@@ -1121,10 +1183,14 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                 maxLines: 3,
                 style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
                 cursorColor: AppColors.champagneGold,
-                decoration: const InputDecoration(
-                  hintText: 'Sebutkan dimensi (P x L x T), teknik finishing kayu (natural oil, walnut), dan keunggulan serat.',
+                decoration: InputDecoration(
+                  hintText:
+                      'Sebutkan dimensi (P x L x T), teknik finishing kayu (natural oil, walnut), dan keunggulan serat.'
+                          .tr(context),
                 ),
-                validator: (val) => val == null || val.trim().isEmpty ? 'Deskripsi wajib diisi' : null,
+                validator: (val) => val == null || val.trim().isEmpty
+                    ? 'Deskripsi wajib diisi'.tr(context)
+                    : null,
               ),
 
               const SizedBox(height: 24),
@@ -1148,7 +1214,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                             valueColor: AlwaysStoppedAnimation<Color>(AppColors.obsidianBlack),
                           ),
                         )
-                      : Text(
+                      : TText(
                           isEdit ? 'Perbarui Karya Jati' : 'Daftarkan Karya ke Etalase',
                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                         ),
@@ -1165,7 +1231,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
   Widget _buildFieldLabel(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
+      child: TText(
         label,
         style: const TextStyle(color: AppColors.ivorySilk, fontSize: 12, fontWeight: FontWeight.w500),
       ),
