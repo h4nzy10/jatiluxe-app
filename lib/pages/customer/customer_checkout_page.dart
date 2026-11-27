@@ -4,6 +4,7 @@ import 'package:jatiluxe_app/service/l10n.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../utils/formatters.dart';
+import 'payment_page.dart';
 
 /// Customer checkout: consolidates the Direct Buy (from product detail) and
 /// cart-select (from cart page) routes into a single, linear purchase flow.
@@ -11,7 +12,7 @@ import '../../utils/formatters.dart';
 /// The page is structured as an editorial "order counter": a compact step
 /// ribbon across the top, the chosen items in the middle, and a receipt card
 /// at the bottom. On confirm it POSTs to the API to create a pending order and
-/// hands off to the payment screen by calling [onOrderCreated].
+/// replaces itself with [PaymentPage] for settlement.
 class CheckoutPage extends StatefulWidget {
   final List<Map<String, dynamic>> items;
   final String? initialAddress;
@@ -109,30 +110,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ? ((response['order'] as Map)['id_order'] as int?)
           : null;
 
-      if (mounted) {
-        if (orderId != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.charcoalVelvet,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: const BorderSide(
-                  color: AppColors.champagneGold,
-                  width: 0.8,
-                ),
-              ),
-              content: const TText(
-                'Pesanan berhasil dibuat',
-                style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
+      if (!mounted) return;
+
+      if (orderId != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.charcoalVelvet,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(
+                color: AppColors.champagneGold,
+                width: 0.8,
               ),
             ),
-          );
-          widget.onOrderCreated?.call();
-        } else {
-          _onSuccess();
-        }
+            content: const TText(
+              'Pesanan berhasil dibuat',
+              style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
+            ),
+          ),
+        );
+        widget.onOrderCreated?.call();
+
+        final order = response is Map && response['order'] is Map
+            ? Map<String, dynamic>.from(response['order'] as Map)
+            : null;
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<bool>(
+            builder: (_) => PaymentPage(
+              orderId: orderId,
+              initialPaymentMethod: _selectedPayment,
+              initialOrder: order,
+            ),
+          ),
+        );
+        return;
       }
+
+      _onSuccess();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,8 +172,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _onSuccess() {
-    // Delegated to the parent (product detail / cart) to open the order detail
-    // page with the returned order payload. This keeps checkout dumb.
+    // Fallback when the API response does not carry an order id.
     widget.onOrderCreated?.call();
   }
 

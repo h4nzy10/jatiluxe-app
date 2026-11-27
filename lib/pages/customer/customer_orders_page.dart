@@ -7,6 +7,7 @@ import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
 import '../../utils/formatters.dart';
+import 'payment_page.dart';
 
 /// Customer orders & real-time delivery tracking.
 ///
@@ -580,15 +581,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
   String? _errorMessage;
 
   Map<String, dynamic>? _order;
-  String _selectedPaymentMethod = 'Transfer Bank';
   XFile? _proofFile;
   Uint8List? _proofBytes;
-
-  static const List<String> _paymentMethods = [
-    'Transfer Bank',
-    'E-Wallet',
-    'Cash on Delivery',
-  ];
 
   @override
   void initState() {
@@ -643,22 +637,19 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
     }
   }
 
-  Future<void> _payOrder() async {
-    setState(() => _isMutating = true);
-    try {
-      await ApiService.put('/api/v1/payments', {
-        'id_order': widget.orderId,
-        'payment_method': _selectedPaymentMethod,
-      });
-      if (!mounted) return;
+  Future<void> _openPayment() async {
+    final paid = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentPage(
+          orderId: widget.orderId,
+          initialOrder: _order,
+        ),
+      ),
+    );
+    if (paid == true && mounted) {
       _hasChanges = true;
       await _fetchOrderDetail();
-      _showSnack('Pembayaran berhasil dikonfirmasi', isError: false);
-    } catch (e) {
-      if (!mounted) return;
-      _showSnack(e.toString().replaceFirst('Exception: ', ''), isError: true);
-    } finally {
-      if (mounted) setState(() => _isMutating = false);
     }
   }
 
@@ -1564,87 +1555,44 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
             ),
           ),
           const SizedBox(height: 14),
-          ..._paymentMethods.map((method) {
-            final selected = _selectedPaymentMethod == method;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedPaymentMethod = method),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.obsidianBlack,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: selected
-                        ? AppColors.champagneGold
-                        : AppColors.surfaceBorder,
-                    width: 0.8,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      selected
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_off,
-                      size: 16,
-                      color: selected
-                          ? AppColors.champagneGold
-                          : AppColors.ashGreySubtle,
-                    ),
-                    const SizedBox(width: 10),
-                    TText(
-                      method,
-                      style: TextStyle(
-                        color: selected
-                            ? AppColors.ivorySilk
-                            : AppColors.ashGrey,
-                        fontSize: 13,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                      ),
-                    ),
-                  ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const TText(
+                'Total Pembayaran',
+                style: TextStyle(color: AppColors.ashGrey, fontSize: 12),
+              ),
+              Text(
+                CurrencyFormat.toRupiah(_order?['total_price']),
+                style: const TextStyle(
+                  color: AppColors.champagneGold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            );
-          }),
-          const SizedBox(height: 6),
+            ],
+          ),
+          const SizedBox(height: 14),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isMutating ? null : _payOrder,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.champagneGold,
-                foregroundColor: AppColors.obsidianBlack,
-                elevation: 0,
+            child: OutlinedButton.icon(
+              onPressed: _isMutating ? null : _openPayment,
+              icon: const Icon(Icons.payment_outlined, size: 16),
+              label: const TText(
+                'Bayar Sekarang',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.champagneGold,
+                side: const BorderSide(
+                  color: AppColors.champagneGold,
+                  width: 0.8,
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: _isMutating
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.8,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.obsidianBlack,
-                        ),
-                      ),
-                    )
-                  : const TText(
-                      'Bayar Sekarang',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
             ),
           ),
         ],

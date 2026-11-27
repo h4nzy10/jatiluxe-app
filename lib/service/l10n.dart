@@ -353,6 +353,24 @@ class AppL10n {
     'Pilih minimal satu item': 'Select at least one item',
     '1 item dipilih': '1 item selected',
 
+    // Payment
+    'PEMBAYARAN': 'PAYMENT',
+    'SELESAIKAN PEMBAYARAN': 'COMPLETE PAYMENT',
+    'Total Pembayaran': 'Total Payment',
+    'TOTAL PEMBAYARAN': 'TOTAL PAYMENT',
+    'Metode Pembayaran': 'Payment Method',
+    'METODE PEMBAYARAN': 'PAYMENT METHOD',
+    'Pilih metode pembayaran untuk memproses pesanan dan menerbitkan resi pengiriman.': 'Choose a payment method to process the order and issue the tracking number.',
+    'Bayar Sekarang': 'Pay Now',
+    'Menunggu pembayaran': 'Awaiting payment',
+    'Lunas': 'Paid',
+    'Pembayaran berhasil dikonfirmasi': 'Payment confirmed successfully',
+    'Pembayaran terverifikasi': 'Payment verified',
+    'Pesanan Anda sedang disiapkan pengrajin.': 'Your order is being prepared by the artisan.',
+    'Lihat Pesanan': 'View Order',
+    'Gagal memuat detail pesanan': 'Failed to load order details',
+    'Data pesanan tidak ditemukan': 'Order data was not found',
+
     // Customer profile
     'PROFIL SAYA': 'MY PROFILE',
     'Profil': 'Profile',
