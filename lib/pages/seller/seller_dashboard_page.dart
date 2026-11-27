@@ -216,10 +216,13 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
     setState(() => _isUploadingAvatar = true);
 
     try {
+      final bytes = await pickedFile.readAsBytes();
       final response = await ApiService.postMultipart(
         '/api/v1/profile-picture',
         fileField: 'profile',
         filePath: pickedFile.path,
+        fileBytes: bytes,
+        filename: pickedFile.name,
       );
 
       if (!mounted) return;

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
@@ -687,7 +687,8 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
   int _selectedCategoryId = 1;
   String _selectedWoodType = 'Jati TPK Perhutani';
   String? _existingPictureUrl;
-  File? _pickedImage;
+  XFile? _pickedFile;
+  Uint8List? _pickedImageBytes;
 
   bool _isSaving = false;
 
@@ -797,7 +798,11 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
       imageQuality: 85,
     );
     if (file != null) {
-      setState(() => _pickedImage = File(file.path));
+      final bytes = await file.readAsBytes();
+      setState(() {
+        _pickedFile = file;
+        _pickedImageBytes = bytes;
+      });
     }
   }
 
@@ -842,7 +847,7 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
 
     final isEdit = widget.existingProduct != null;
 
-    if (!isEdit && _pickedImage == null) {
+    if (!isEdit && _pickedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: AppColors.charcoalVelvet,
@@ -870,12 +875,14 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
     try {
       if (isEdit) {
         final idProduct = widget.existingProduct!['id_product'];
-        if (_pickedImage != null) {
+        if (_pickedFile != null) {
           await ApiService.putMultipart(
             '/api/v1/product/$idProduct',
             fields: fields,
             fileField: 'picture',
-            filePath: _pickedImage!.path,
+            filePath: _pickedFile?.path,
+            fileBytes: _pickedImageBytes,
+            filename: _pickedFile?.name,
           );
         } else {
           await ApiService.put('/api/v1/product/$idProduct', fields);
@@ -885,7 +892,9 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
           '/api/v1/product',
           fields: fields,
           fileField: 'picture',
-          filePath: _pickedImage!.path,
+          filePath: _pickedFile?.path,
+          fileBytes: _pickedImageBytes,
+          filename: _pickedFile?.name,
         );
       }
 
@@ -986,13 +995,13 @@ class _ProductFormSheetState extends State<_ProductFormSheet> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.surfaceBorder, width: 0.8),
                   ),
-                  child: _pickedImage != null
+                  child: _pickedImageBytes != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(11),
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              Image.file(_pickedImage!, fit: BoxFit.cover),
+                              Image.memory(_pickedImageBytes!, fit: BoxFit.cover),
                               Container(
                                 color: Colors.black38,
                                 child: const Center(

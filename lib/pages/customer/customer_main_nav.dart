@@ -6,10 +6,9 @@ import '../login.dart';
 import 'customer_catalog_page.dart';
 import 'customer_checkout_page.dart';
 import 'customer_cart_page.dart';
+import 'customer_orders_page.dart';
 import 'customer_product_detail_page.dart';
 
-/// Customer shell with a persistent bottom navigation bar. Both tabs keep
-/// their own AppBar; the shell owns tab switching and the cart badge count.
 class CustomerMainNav extends StatefulWidget {
   const CustomerMainNav({super.key});
 
@@ -69,6 +68,9 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             onCheckout: (selectedCartIds, total, items) =>
                 _openCheckoutFromCart(context, items),
           ),
+          CustomerOrdersPage(
+            onBrowseCatalog: () => _onTabTapped(0),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -98,6 +100,11 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
               child: const Icon(Icons.shopping_cart_outlined),
             ),
             label: 'Keranjang'.tr(context),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.receipt_long_outlined),
+            activeIcon: const Icon(Icons.receipt_long_rounded),
+            label: 'Pesanan'.tr(context),
           ),
         ],
       ),

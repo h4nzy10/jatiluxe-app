@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
@@ -244,7 +245,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
 
     if (source == null) return;
 
-    if (source == ImageSource.camera) {
+    if (!kIsWeb && source == ImageSource.camera) {
       final status = await Permission.camera.request();
       if (status.isPermanentlyDenied) {
         _showSnack(
@@ -271,10 +272,13 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
 
     setState(() => _isUploadingPhoto = true);
     try {
+      final bytes = await picked.readAsBytes();
       final response = await ApiService.postMultipart(
         '/api/v1/profile-picture',
         fileField: 'profile',
         filePath: picked.path,
+        fileBytes: bytes,
+        filename: picked.name,
       );
       if (!mounted) return;
 

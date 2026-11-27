@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,6 +104,8 @@ class ApiService {
     Map<String, String>? fields,
     String? fileField,
     String? filePath,
+    Uint8List? fileBytes,
+    String? filename,
   }) async {
     final token = await getToken();
     final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl$endpoint'));
@@ -114,8 +118,20 @@ class ApiService {
       request.fields.addAll(fields);
     }
 
-    if (fileField != null && filePath != null && filePath.isNotEmpty) {
-      request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+    if (fileField != null) {
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          fileField,
+          fileBytes,
+          filename: filename ?? 'upload.jpg',
+        ));
+      } else if (filePath != null && filePath.isNotEmpty) {
+        if (kIsWeb) {
+          throw Exception('MultipartFile.fromPath is not supported on web. Provide fileBytes.');
+        } else {
+          request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+        }
+      }
     }
 
     final streamedResponse = await request.send();
@@ -128,6 +144,8 @@ class ApiService {
     Map<String, String>? fields,
     String? fileField,
     String? filePath,
+    Uint8List? fileBytes,
+    String? filename,
   }) async {
     final token = await getToken();
     final request = http.MultipartRequest('PUT', Uri.parse('$_baseUrl$endpoint'));
@@ -140,8 +158,20 @@ class ApiService {
       request.fields.addAll(fields);
     }
 
-    if (fileField != null && filePath != null && filePath.isNotEmpty) {
-      request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+    if (fileField != null) {
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          fileField,
+          fileBytes,
+          filename: filename ?? 'upload.jpg',
+        ));
+      } else if (filePath != null && filePath.isNotEmpty) {
+        if (kIsWeb) {
+          throw Exception('MultipartFile.fromPath is not supported on web. Provide fileBytes.');
+        } else {
+          request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+        }
+      }
     }
 
     final streamedResponse = await request.send();
