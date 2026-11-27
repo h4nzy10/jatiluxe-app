@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jatiluxe_app/service/l10n.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../utils/formatters.dart';
@@ -40,7 +41,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String _addressError = '';
   bool _isPlacing = false;
 
-  static const _steps = const ['Alamat', 'Pengiriman', 'Pembayaran', 'Ringkasan'];
+  static const _steps = ['Alamat', 'Pengiriman', 'Pembayaran', 'Ringkasan'];
   int _activeStep = 0;
 
   @override
@@ -116,7 +117,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
               backgroundColor: AppColors.charcoalVelvet,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-                side: const BorderSide(color: AppColors.champagneGold, width: 0.8),
+                side: const BorderSide(
+                  color: AppColors.champagneGold,
+                  width: 0.8,
+                ),
               ),
               content: const TText(
                 'Pesanan berhasil dibuat',
@@ -165,13 +169,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   num get _total => _subtotal;
 
-  int _quantityOf(Map<String, dynamic> item) =>
-      (item['quantity'] ?? 1) as int;
+  int _quantityOf(Map<String, dynamic> item) => (item['quantity'] ?? 1) as int;
 
   String _cleanImage(String? url) {
     if (url == null || url.trim().isEmpty) return '';
     final clean = url.trim();
-    return clean.startsWith('http://') ? 'https://${clean.substring(7)}' : clean;
+    return clean.startsWith('http://')
+        ? 'https://${clean.substring(7)}'
+        : clean;
   }
 
   @override
@@ -220,7 +225,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   width: 4,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: active ? AppColors.champagneGold : AppColors.surfaceBorder,
+                    color: active
+                        ? AppColors.champagneGold
+                        : AppColors.surfaceBorder,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -230,7 +237,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   child: TText(
                     _steps[i],
                     style: TextStyle(
-                      color: active ? AppColors.champagneGold : AppColors.ashGreySubtle,
+                      color: active
+                          ? AppColors.champagneGold
+                          : AppColors.ashGreySubtle,
                       fontSize: 10,
                       fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                       letterSpacing: 0.4,
@@ -278,7 +287,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 8),
             const TText(
               'Masukkan alamat pengiriman. Tinggal disalin dari profil toko saat ada.',
-              style: TextStyle(color: AppColors.ashGrey, fontSize: 12, height: 1.4),
+              style: TextStyle(
+                color: AppColors.ashGrey,
+                fontSize: 12,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 14),
             _buildAddressField(),
@@ -313,7 +326,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
       maxLines: 2,
       decoration: InputDecoration(
         hintText: 'Alamat lengkap (dari profil toko)',
-        hintStyle: const TextStyle(color: AppColors.ashGreySubtle, fontSize: 13),
+        hintStyle: const TextStyle(
+          color: AppColors.ashGreySubtle,
+          fontSize: 13,
+        ),
         prefixIcon: const Icon(
           Icons.location_on_outlined,
           color: AppColors.ashGreySubtle,
@@ -356,7 +372,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 8),
             const TText(
               'Pilih armada. Status ini dipantau oleh toko sampai barang tiba.',
-              style: TextStyle(color: AppColors.ashGrey, fontSize: 12, height: 1.4),
+              style: TextStyle(
+                color: AppColors.ashGrey,
+                fontSize: 12,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 16),
             _buildDeliveryOption('express', 'Ekspres'),
@@ -367,7 +387,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
               onPressed: _activeStep < 3 ? _nextStep : null,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.champagneGold,
-                side: const BorderSide(color: AppColors.champagneGold, width: 0.8),
+                side: const BorderSide(
+                  color: AppColors.champagneGold,
+                  width: 0.8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -394,10 +417,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.champagneGold : AppColors.charcoalVelvet,
+                color: isSelected
+                    ? AppColors.champagneGold
+                    : AppColors.charcoalVelvet,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? AppColors.champagneGold : AppColors.surfaceBorder,
+                  color: isSelected
+                      ? AppColors.champagneGold
+                      : AppColors.surfaceBorder,
                   width: 0.8,
                 ),
               ),
@@ -406,9 +433,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   value == 'express'
                       ? Icons.trending_up_rounded
                       : value == 'standard'
-                          ? Icons.arrow_downward_rounded
-                          : Icons.fast_forward_rounded,
-                  color: isSelected ? AppColors.obsidianBlack : AppColors.ivorySilk,
+                      ? Icons.arrow_downward_rounded
+                      : Icons.fast_forward_rounded,
+                  color: isSelected
+                      ? AppColors.obsidianBlack
+                      : AppColors.ivorySilk,
                   size: 20,
                 ),
               ),
@@ -421,9 +450,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   TText(
                     label,
                     style: TextStyle(
-                      color: isSelected ? AppColors.ivorySilk : AppColors.ivorySilk,
+                      color: isSelected
+                          ? AppColors.ivorySilk
+                          : AppColors.ivorySilk,
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -431,9 +464,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     value == 'express'
                         ? 'Sampai 1\u20132 hari kerja'
                         : value == 'standard'
-                            ? 'Sampai 3\u20135 hari kerja'
-                            : 'Sampai 1 hari',
-                    style: const TextStyle(color: AppColors.ashGrey, fontSize: 11),
+                        ? 'Sampai 3\u20135 hari kerja'
+                        : 'Sampai 1 hari',
+                    style: const TextStyle(
+                      color: AppColors.ashGrey,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -442,7 +478,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               width: 8,
               height: 8,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.champagneGold : AppColors.surfaceBorder,
+                color: isSelected
+                    ? AppColors.champagneGold
+                    : AppColors.surfaceBorder,
                 shape: BoxShape.circle,
               ),
             ),
@@ -470,7 +508,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 8),
             const TText(
               'Pilih metode pembayaran. Transaksi baru dianggap selesai saat toko konfirmasi.',
-              style: TextStyle(color: AppColors.ashGrey, fontSize: 12, height: 1.4),
+              style: TextStyle(
+                color: AppColors.ashGrey,
+                fontSize: 12,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 16),
             _buildPaymentOption('transfer', 'Transfer Bank'),
@@ -505,10 +547,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.champagneGold : AppColors.charcoalVelvet,
+                color: isSelected
+                    ? AppColors.champagneGold
+                    : AppColors.charcoalVelvet,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? AppColors.champagneGold : AppColors.surfaceBorder,
+                  color: isSelected
+                      ? AppColors.champagneGold
+                      : AppColors.surfaceBorder,
                   width: 0.8,
                 ),
               ),
@@ -517,9 +563,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   value == 'transfer'
                       ? Icons.account_balance_wallet_rounded
                       : value == 'ewallet'
-                          ? Icons.account_balance_wallet_rounded
-                          : Icons.wallet_rounded,
-                  color: isSelected ? AppColors.obsidianBlack : AppColors.ivorySilk,
+                      ? Icons.account_balance_wallet_rounded
+                      : Icons.wallet_rounded,
+                  color: isSelected
+                      ? AppColors.obsidianBlack
+                      : AppColors.ivorySilk,
                   size: 20,
                 ),
               ),
@@ -532,9 +580,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   TText(
                     label,
                     style: TextStyle(
-                      color: isSelected ? AppColors.ivorySilk : AppColors.ivorySilk,
+                      color: isSelected
+                          ? AppColors.ivorySilk
+                          : AppColors.ivorySilk,
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -542,9 +594,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     value == 'transfer'
                         ? 'Transfer ke rekening toko'
                         : value == 'ewallet'
-                            ? 'Via aplikasi e-wallet'
-                            : 'Bayar langsung saat barang tiba',
-                    style: const TextStyle(color: AppColors.ashGrey, fontSize: 11),
+                        ? 'Via aplikasi e-wallet'
+                        : 'Bayar langsung saat barang tiba',
+                    style: const TextStyle(
+                      color: AppColors.ashGrey,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -553,7 +608,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               width: 8,
               height: 8,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.champagneGold : AppColors.surfaceBorder,
+                color: isSelected
+                    ? AppColors.champagneGold
+                    : AppColors.surfaceBorder,
                 shape: BoxShape.circle,
               ),
             ),
@@ -582,7 +639,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 const SizedBox(width: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.champagneGold.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
@@ -608,12 +668,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
               _selectedDelivery == 'express'
                   ? 'Rp 15.000'
                   : _selectedDelivery == 'standard'
-                      ? 'Rp 8.000'
-                      : 'Rp 12.000',
+                  ? 'Rp 8.000'
+                  : 'Rp 12.000',
             ),
-            const Divider(color: AppColors.surfaceBorder, height: 1, thickness: 0.8),
+            const Divider(
+              color: AppColors.surfaceBorder,
+              height: 1,
+              thickness: 0.8,
+            ),
             const SizedBox(height: 6),
-            _buildSummaryRow('Total', CurrencyFormat.toRupiah(_total), isTotal: true),
+            _buildSummaryRow(
+              'Total',
+              CurrencyFormat.toRupiah(_total),
+              isTotal: true,
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _isPlacing ? null : _placeOrder,
@@ -631,7 +699,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.obsidianBlack),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.obsidianBlack,
+                        ),
                       ),
                     )
                   : const TText(
@@ -645,12 +715,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: _isPlacing ? null : () {
-                if (_activeStep > 0) _prevStep();
-                else {
-                  setState(() => _activeStep = 0);
-                }
-              },
+              onPressed: _isPlacing
+                  ? null
+                  : () {
+                      if (_activeStep > 0) {
+                        _prevStep();
+                      } else {
+                        setState(() => _activeStep = 0);
+                      }
+                    },
               child: const TText('Kembali ke keranjang'),
             ),
           ],
@@ -683,23 +756,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 decoration: BoxDecoration(
                   color: AppColors.charcoalVelvet,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.surfaceBorder, width: 0.6),
+                  border: Border.all(
+                    color: AppColors.surfaceBorder,
+                    width: 0.6,
+                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: SizedBox(
                     width: 44,
                     height: 44,
-                    child: item['picture'] != null && item['picture'].toString().isNotEmpty
+                    child:
+                        item['picture'] != null &&
+                            item['picture'].toString().isNotEmpty
                         ? Image.network(
                             _cleanImage(item['picture'].toString()),
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Center(
-                              child: Icon(Icons.image_outlined, size: 18, color: AppColors.ashGreySubtle),
+                            errorBuilder: (_, _, _) => const Center(
+                              child: Icon(
+                                Icons.image_outlined,
+                                size: 18,
+                                color: AppColors.ashGreySubtle,
+                              ),
                             ),
                           )
                         : const Center(
-                            child: Icon(Icons.image_outlined, size: 18, color: AppColors.ashGreySubtle),
+                            child: Icon(
+                              Icons.image_outlined,
+                              size: 18,
+                              color: AppColors.ashGreySubtle,
+                            ),
                           ),
                   ),
                 ),

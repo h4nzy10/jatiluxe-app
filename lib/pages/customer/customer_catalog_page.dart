@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
@@ -8,14 +9,14 @@ import '../../utils/formatters.dart';
 /// and restrained category tabs.
 class CustomerCatalogPage extends StatefulWidget {
   /// Called when a product card is tapped so the parent can open its detail.
-  final void Function(Map<String, dynamic> product)? onProductSelected;
+  final void Function(Map<String, dynamic> product) onProductSelected;
 
   /// Optional logout action rendered in the catalog AppBar.
   final Future<void> Function()? onLogout;
 
   const CustomerCatalogPage({
     super.key,
-    this.onProductSelected,
+    required this.onProductSelected,
     this.onLogout,
   });
 
@@ -85,8 +86,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
       if (!mounted) return;
       final message = e.toString().replaceFirst('Exception: ', '');
       final isEmptyCatalog =
-          message.toLowerCase().contains('empty') ||
-              message.contains('404');
+          message.toLowerCase().contains('empty') || message.contains('404');
       setState(() {
         if (isEmptyCatalog) {
           _products = [];
@@ -109,13 +109,15 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
         final category = (product['category'] ?? '').toString().toLowerCase();
         final seller = (product['seller'] ?? '').toString().toLowerCase();
 
-        final matchesQuery = query.isEmpty ||
+        final matchesQuery =
+            query.isEmpty ||
             name.contains(query) ||
             wood.contains(query) ||
             category.contains(query) ||
             seller.contains(query);
 
-        final matchesCategory = _selectedCategoryFilter == 'Semua' ||
+        final matchesCategory =
+            _selectedCategoryFilter == 'Semua' ||
             category == _selectedCategoryFilter.trim().toLowerCase();
 
         return matchesQuery && matchesCategory;
@@ -235,10 +237,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
   }
 
   Widget _buildStateSliver(Widget child) {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: child,
-    );
+    return SliverFillRemaining(hasScrollBody: false, child: child);
   }
 
   Widget _buildIntro() {
@@ -350,22 +349,13 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
           border: const UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.surfaceBorder,
-              width: 0.8,
-            ),
+            borderSide: BorderSide(color: AppColors.surfaceBorder, width: 0.8),
           ),
           enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.surfaceBorder,
-              width: 0.8,
-            ),
+            borderSide: BorderSide(color: AppColors.surfaceBorder, width: 0.8),
           ),
           focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.champagneGold,
-              width: 1,
-            ),
+            borderSide: BorderSide(color: AppColors.champagneGold, width: 1),
           ),
         ),
       ),
@@ -399,8 +389,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
                         ? AppColors.ivorySilk
                         : AppColors.ashGreySubtle,
                     fontSize: 11.5,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     letterSpacing: 0.1,
                   ),
                 ),
@@ -420,10 +409,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
     );
   }
 
-  Widget _buildFeatured(
-    BuildContext context,
-    Map<String, dynamic> product,
-  ) {
+  Widget _buildFeatured(BuildContext context, Map<String, dynamic> product) {
     final picture = _cleanImageUrl(product['picture']?.toString());
     final category = (product['category'] ?? '').toString();
     final wood = (product['wood_type'] ?? '').toString();
@@ -543,8 +529,9 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors.champagneGold
-                                    .withValues(alpha: 0.7),
+                                color: AppColors.champagneGold.withValues(
+                                  alpha: 0.7,
+                                ),
                                 width: 0.8,
                               ),
                             ),
@@ -590,10 +577,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
     );
   }
 
-  Widget _buildProductTile(
-    BuildContext context,
-    Map<String, dynamic> product,
-  ) {
+  Widget _buildProductTile(BuildContext context, Map<String, dynamic> product) {
     final picture = _cleanImageUrl(product['picture']?.toString());
     final category = (product['category'] ?? '').toString();
     final wood = (product['wood_type'] ?? '').toString();
@@ -722,22 +706,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
   }
 
   void _openProduct(BuildContext context, Map<String, dynamic> product) {
-    final callback = widget.onProductSelected;
-    if (callback != null) {
-      callback(product);
-      return;
-    }
-    // Product detail page will replace this once it is wired in.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.surfaceElevated,
-        content: const TText(
-          'Detail produk segera tersedia',
-          style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
-        ),
-      ),
-    );
+    widget.onProductSelected(product);
   }
 
   Widget _buildLoading() {
@@ -747,9 +716,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
         height: 24,
         child: CircularProgressIndicator(
           strokeWidth: 1.8,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            AppColors.champagneGold,
-          ),
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.champagneGold),
         ),
       ),
     );
@@ -805,10 +772,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
             TText(
               _errorMessage ?? 'Gagal memuat katalog',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
             const SizedBox(height: 10),
             TextButton.icon(

@@ -1,25 +1,33 @@
 import 'dart:convert';
-import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String _baseUrl = "https://jatiluxe-api.vercel.app";
+  /// Hosted backend by default. Override for local development with:
+  /// flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
+  static const String _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://jatiluxe-api.vercel.app',
+  );
   static const String _authKey = "auth";
 
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_authKey, token);
   }
+
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_authKey);
   }
+
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_authKey);
   }
+
   static Future<Map<String, String>> _headers() async {
     final token = await getToken();
     return {
@@ -79,10 +87,7 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<dynamic> put(
-    String endpoint,
-    Map<String, dynamic> data,
-  ) async {
+  static Future<dynamic> put(String endpoint, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$_baseUrl$endpoint'),
       headers: await _headers(),
@@ -108,7 +113,10 @@ class ApiService {
     String? filename,
   }) async {
     final token = await getToken();
-    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl$endpoint'));
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl$endpoint'),
+    );
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
@@ -120,16 +128,22 @@ class ApiService {
 
     if (fileField != null) {
       if (fileBytes != null) {
-        request.files.add(http.MultipartFile.fromBytes(
-          fileField,
-          fileBytes,
-          filename: filename ?? 'upload.jpg',
-        ));
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            fileField,
+            fileBytes,
+            filename: filename ?? 'upload.jpg',
+          ),
+        );
       } else if (filePath != null && filePath.isNotEmpty) {
         if (kIsWeb) {
-          throw Exception('MultipartFile.fromPath is not supported on web. Provide fileBytes.');
+          throw Exception(
+            'MultipartFile.fromPath is not supported on web. Provide fileBytes.',
+          );
         } else {
-          request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+          request.files.add(
+            await http.MultipartFile.fromPath(fileField, filePath),
+          );
         }
       }
     }
@@ -148,7 +162,10 @@ class ApiService {
     String? filename,
   }) async {
     final token = await getToken();
-    final request = http.MultipartRequest('PUT', Uri.parse('$_baseUrl$endpoint'));
+    final request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('$_baseUrl$endpoint'),
+    );
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
@@ -160,16 +177,22 @@ class ApiService {
 
     if (fileField != null) {
       if (fileBytes != null) {
-        request.files.add(http.MultipartFile.fromBytes(
-          fileField,
-          fileBytes,
-          filename: filename ?? 'upload.jpg',
-        ));
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            fileField,
+            fileBytes,
+            filename: filename ?? 'upload.jpg',
+          ),
+        );
       } else if (filePath != null && filePath.isNotEmpty) {
         if (kIsWeb) {
-          throw Exception('MultipartFile.fromPath is not supported on web. Provide fileBytes.');
+          throw Exception(
+            'MultipartFile.fromPath is not supported on web. Provide fileBytes.',
+          );
         } else {
-          request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
+          request.files.add(
+            await http.MultipartFile.fromPath(fileField, filePath),
+          );
         }
       }
     }
@@ -179,4 +202,3 @@ class ApiService {
     return _handleResponse(response);
   }
 }
-

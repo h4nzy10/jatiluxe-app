@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
@@ -11,9 +12,9 @@ import '../../utils/formatters.dart';
 /// public catalog is fetched alongside it to enrich cards with pictures and to
 /// allow opening the matching product detail page.
 class CustomerCartPage extends StatefulWidget {
-  /// Receives checked cart detail IDs and the computed total. Page 4 will use
-  /// this to start checkout without reading the cart again.
-  final void Function(List<int> selectedCartIds, num total, dynamic)? onCheckout;
+  /// Receives checked cart detail IDs and the computed total so the shell can
+  /// start checkout without reading the cart again.
+  final void Function(List<int> selectedCartIds, num total, dynamic) onCheckout;
 
   /// Called when a cart item's product card is tapped.
   final void Function(Map<String, dynamic> product)? onProductSelected;
@@ -26,7 +27,7 @@ class CustomerCartPage extends StatefulWidget {
 
   const CustomerCartPage({
     super.key,
-    this.onCheckout,
+    required this.onCheckout,
     this.onProductSelected,
     this.onBrowseCatalog,
     this.onCartChanged,
@@ -119,7 +120,8 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
 
   bool get _allSelected =>
       _items.isNotEmpty &&
-      _selectedIds.length == _items.map(_asMap).map(_itemId).where((id) => id > 0).length;
+      _selectedIds.length ==
+          _items.map(_asMap).map(_itemId).where((id) => id > 0).length;
 
   String? _cleanImageUrl(String? url) {
     if (url == null || url.trim().isEmpty) return null;
@@ -178,19 +180,19 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
               ),
             )
           : _errorMessage != null
-              ? _buildErrorView()
-              : _items.isEmpty
-                  ? _buildEmptyView(context)
-                  : Column(
-                      children: [
-                        _buildSelectAllRow(),
-                        Expanded(child: _buildItemList(context)),
-                      ],
-                    ),
+          ? _buildErrorView()
+          : _items.isEmpty
+          ? _buildEmptyView(context)
+          : Column(
+              children: [
+                _buildSelectAllRow(),
+                Expanded(child: _buildItemList(context)),
+              ],
+            ),
       bottomNavigationBar:
           (_isLoading || _errorMessage != null || _items.isEmpty)
-              ? null
-              : _buildBottomBar(context),
+          ? null
+          : _buildBottomBar(context),
     );
   }
 
@@ -517,11 +519,7 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
   }
 
   void _toggleSelectAll(bool? value) {
-    final ids = _items
-        .map(_asMap)
-        .map(_itemId)
-        .where((id) => id > 0)
-        .toSet();
+    final ids = _items.map(_asMap).map(_itemId).where((id) => id > 0).toSet();
     setState(() {
       if (value == true) {
         _selectedIds
@@ -542,9 +540,7 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
       await ApiService.put('/api/v1/cart/$id', {'quantity': quantity});
       if (!mounted) return;
       setState(() {
-        final index = _items.indexWhere(
-          (raw) => _itemId(_asMap(raw)) == id,
-        );
+        final index = _items.indexWhere((raw) => _itemId(_asMap(raw)) == id);
         if (index >= 0) {
           final updated = _asMap(_items[index]);
           updated['quantity'] = quantity;
@@ -722,17 +718,11 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
     }
 
     final ids = _selectedIds.toList()..sort();
-    final callback = widget.onCheckout;
-    if (callback != null) {
-      final items = _items.where((item) {
-        final id = int.tryParse(item['cart_detail_id']?.toString() ?? '');
-        return id != null && ids.contains(id);
-      }).toList();
-      callback(ids, _selectedTotal, items);
-      return;
-    }
-    // Checkout page will replace this once it is wired in.
-    _showSnack('Checkout segera tersedia', isError: false);
+    final items = _items.where((item) {
+      final id = int.tryParse(item['cart_detail_id']?.toString() ?? '');
+      return id != null && ids.contains(id);
+    }).toList();
+    widget.onCheckout(ids, _selectedTotal, items);
   }
 
   void _showSnack(String message, {required bool isError}) {
@@ -823,17 +813,12 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
             TText(
               _errorMessage ?? 'Gagal memuat keranjang',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
             const SizedBox(height: 14),
             ElevatedButton(
               onPressed: _fetchCart,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(140, 40),
-              ),
+              style: ElevatedButton.styleFrom(minimumSize: const Size(140, 40)),
               child: const TText('Coba Lagi'),
             ),
           ],

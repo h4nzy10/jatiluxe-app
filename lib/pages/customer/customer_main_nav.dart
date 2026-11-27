@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jatiluxe_app/service/l10n.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../login.dart';
@@ -8,6 +9,7 @@ import 'customer_checkout_page.dart';
 import 'customer_cart_page.dart';
 import 'customer_orders_page.dart';
 import 'customer_product_detail_page.dart';
+import 'customer_profile_page.dart';
 
 class CustomerMainNav extends StatefulWidget {
   const CustomerMainNav({super.key});
@@ -58,19 +60,20 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
         index: _selectedIndex,
         children: [
           CustomerCatalogPage(
-            onProductSelected: (product) => _openProductDetail(context, product),
+            onProductSelected: (product) =>
+                _openProductDetail(context, product),
             onLogout: () => _logout(context),
           ),
           CustomerCartPage(
-            onProductSelected: (product) => _openProductDetail(context, product),
+            onProductSelected: (product) =>
+                _openProductDetail(context, product),
             onBrowseCatalog: () => _onTabTapped(0),
             onCartChanged: () => _refreshCartCount(),
             onCheckout: (selectedCartIds, total, items) =>
                 _openCheckoutFromCart(context, items),
           ),
-          CustomerOrdersPage(
-            onBrowseCatalog: () => _onTabTapped(0),
-          ),
+          CustomerOrdersPage(onBrowseCatalog: () => _onTabTapped(0)),
+          const CustomerProfilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -105,6 +108,11 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             icon: const Icon(Icons.receipt_long_outlined),
             activeIcon: const Icon(Icons.receipt_long_rounded),
             label: 'Pesanan'.tr(context),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person_outline),
+            activeIcon: const Icon(Icons.person),
+            label: 'Profil'.tr(context),
           ),
         ],
       ),

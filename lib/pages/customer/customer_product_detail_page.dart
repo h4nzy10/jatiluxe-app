@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
@@ -12,13 +13,13 @@ import '../../utils/formatters.dart';
 class CustomerProductDetailPage extends StatefulWidget {
   final String productId;
   final Map<String, dynamic>? initialProduct;
-  final void Function(Map<String, dynamic> product, int quantity)? onBuyNow;
+  final void Function(Map<String, dynamic> product, int quantity) onBuyNow;
 
   const CustomerProductDetailPage({
     super.key,
     required this.productId,
     this.initialProduct,
-    this.onBuyNow,
+    required this.onBuyNow,
   });
 
   @override
@@ -49,9 +50,9 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
 
     try {
       final results = await Future.wait([
-      ApiService.get('/api/v1/product/${widget.productId}'),
-      ApiService.get('/api/v1/products').catchError((_) => null),
-    ]);
+        ApiService.get('/api/v1/product/${widget.productId}'),
+        ApiService.get('/api/v1/products').catchError((_) => null),
+      ]);
       if (!mounted) return;
       final raw = results[0] is Map ? results[0]['product'] : null;
       if (raw == null) {
@@ -106,8 +107,7 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
     final candidates = products
         .map(_asMap)
         .where(
-          (product) =>
-              (product['id_product'] ?? '').toString() != currentId,
+          (product) => (product['id_product'] ?? '').toString() != currentId,
         )
         .toList();
 
@@ -156,10 +156,11 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
               ),
             )
           : _errorMessage != null
-              ? _buildErrorView(context)
-              : _buildContent(context),
-      bottomNavigationBar:
-          (_isLoading || _errorMessage != null) ? null : _buildActionBar(context),
+          ? _buildErrorView(context)
+          : _buildContent(context),
+      bottomNavigationBar: (_isLoading || _errorMessage != null)
+          ? null
+          : _buildActionBar(context),
     );
   }
 
@@ -225,8 +226,7 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
                     TText(
                       stock > 0 ? 'Stok: $stock Unit' : 'Stok Habis',
                       style: TextStyle(
-                        color:
-                            stock > 0 ? AppColors.success : AppColors.error,
+                        color: stock > 0 ? AppColors.success : AppColors.error,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -721,8 +721,8 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
     final foreground = !enabled
         ? AppColors.ashGreySubtle
         : primary
-            ? AppColors.obsidianBlack
-            : AppColors.champagneGold;
+        ? AppColors.obsidianBlack
+        : AppColors.champagneGold;
     final background = primary
         ? (enabled ? AppColors.champagneGold : AppColors.surfaceElevated)
         : Colors.transparent;
@@ -735,8 +735,9 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
           side: primary
               ? BorderSide.none
               : BorderSide(
-                  color:
-                      enabled ? AppColors.warmBronze : AppColors.surfaceBorder,
+                  color: enabled
+                      ? AppColors.warmBronze
+                      : AppColors.surfaceBorder,
                   width: 1,
                 ),
         ),
@@ -786,7 +787,7 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
       _showSnack(
         context,
         'Gagal menambahkan ke keranjang: '
-            '${e.toString().replaceFirst('Exception: ', '')}',
+        '${e.toString().replaceFirst('Exception: ', '')}',
         isError: true,
       );
     } finally {
@@ -795,16 +796,12 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
   }
 
   void _buyNow() {
-    final callback = widget.onBuyNow;
-    if (callback != null) {
-      callback(_currentProduct, _quantity);
-      return;
-    }
-    // Checkout page will replace this once it is wired in.
-    _showSnack(context, 'Checkout segera tersedia', isError: false);
+    widget.onBuyNow(_currentProduct, _quantity);
   }
 
-  void _showSnack(BuildContext context, String message, {
+  void _showSnack(
+    BuildContext context,
+    String message, {
     required bool isError,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -842,17 +839,12 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
             TText(
               _errorMessage ?? 'Gagal memuat detail produk',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.ivorySilk,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
             ),
             const SizedBox(height: 14),
             ElevatedButton(
               onPressed: _fetchProduct,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(140, 40),
-              ),
+              style: ElevatedButton.styleFrom(minimumSize: const Size(140, 40)),
               child: const TText('Coba Lagi'),
             ),
           ],

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../constants/theme.dart';
 import '../../service/api.dart';
 import '../../service/l10n.dart';
@@ -14,10 +16,7 @@ import '../../utils/formatters.dart';
 class CustomerOrdersPage extends StatefulWidget {
   final VoidCallback? onBrowseCatalog;
 
-  const CustomerOrdersPage({
-    super.key,
-    this.onBrowseCatalog,
-  });
+  const CustomerOrdersPage({super.key, this.onBrowseCatalog});
 
   @override
   State<CustomerOrdersPage> createState() => _CustomerOrdersPageState();
@@ -126,10 +125,8 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
     final changed = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => CustomerOrderDetailPage(
-          orderId: orderId,
-          initialSummary: order,
-        ),
+        builder: (_) =>
+            CustomerOrderDetailPage(orderId: orderId, initialSummary: order),
       ),
     );
 
@@ -194,27 +191,21 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
                     ),
                   )
                 : _errorMessage != null
-                    ? _buildErrorView()
-                    : _filteredOrders.isEmpty
-                        ? _buildEmptyView()
-                        : RefreshIndicator(
-                            color: AppColors.champagneGold,
-                            backgroundColor: AppColors.charcoalVelvet,
-                            onRefresh: _fetchOrders,
-                            child: ListView.separated(
-                              padding: const EdgeInsets.fromLTRB(
-                                20,
-                                18,
-                                20,
-                                28,
-                              ),
-                              itemCount: _filteredOrders.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 14),
-                              itemBuilder: (context, index) =>
-                                  _buildOrderCard(_filteredOrders[index]),
-                            ),
-                          ),
+                ? _buildErrorView()
+                : _filteredOrders.isEmpty
+                ? _buildEmptyView()
+                : RefreshIndicator(
+                    color: AppColors.champagneGold,
+                    backgroundColor: AppColors.charcoalVelvet,
+                    onRefresh: _fetchOrders,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
+                      itemCount: _filteredOrders.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 14),
+                      itemBuilder: (context, index) =>
+                          _buildOrderCard(_filteredOrders[index]),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -228,7 +219,7 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: _filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 24),
+        separatorBuilder: (_, _) => const SizedBox(width: 24),
         itemBuilder: (context, index) {
           final label = _filters[index];
           final selected = label == _selectedFilter;
@@ -279,13 +270,14 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
       deliveryStatus: deliveryStatus,
     );
 
-    final needsProof = deliveryStatus == 'Out for delivery' &&
+    final needsProof =
+        deliveryStatus == 'Out for delivery' &&
         orderStatus.toLowerCase() != 'canceled' &&
         orderStatus.toLowerCase() != 'finished';
 
     final needsPayment =
         paymentStatus.toLowerCase() == 'waiting for payment' &&
-            orderStatus.toLowerCase() != 'canceled';
+        orderStatus.toLowerCase() != 'canceled';
 
     return InkWell(
       onTap: () => _openOrderDetail(order),
@@ -296,7 +288,7 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: needsProof
-                ? AppColors.champagneGold.withOpacity(0.45)
+                ? AppColors.champagneGold.withValues(alpha: 0.45)
                 : AppColors.surfaceBorder,
             width: 0.8,
           ),
@@ -425,8 +417,8 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
                         needsPayment
                             ? 'Bayar Sekarang'
                             : needsProof
-                                ? 'Konfirmasi Terima'
-                                : 'Lihat Detail',
+                            ? 'Konfirmasi Terima'
+                            : 'Lihat Detail',
                         style: TextStyle(
                           color: (needsPayment || needsProof)
                               ? AppColors.champagneGold
@@ -664,10 +656,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
       _showSnack('Pembayaran berhasil dikonfirmasi', isError: false);
     } catch (e) {
       if (!mounted) return;
-      _showSnack(
-        e.toString().replaceFirst('Exception: ', ''),
-        isError: true,
-      );
+      _showSnack(e.toString().replaceFirst('Exception: ', ''), isError: true);
     } finally {
       if (mounted) setState(() => _isMutating = false);
     }
@@ -729,10 +718,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
       _showSnack('Pesanan berhasil dibatalkan', isError: false);
     } catch (e) {
       if (!mounted) return;
-      _showSnack(
-        e.toString().replaceFirst('Exception: ', ''),
-        isError: true,
-      );
+      _showSnack(e.toString().replaceFirst('Exception: ', ''), isError: true);
     } finally {
       if (mounted) setState(() => _isMutating = false);
     }
@@ -836,10 +822,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      _showSnack(
-        e.toString().replaceFirst('Exception: ', ''),
-        isError: true,
-      );
+      _showSnack(e.toString().replaceFirst('Exception: ', ''), isError: true);
     } finally {
       if (mounted) setState(() => _isMutating = false);
     }
@@ -922,8 +905,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                   ),
                 )
               : _errorMessage != null && _order == null
-                  ? _buildErrorView()
-                  : _buildDetailBody(),
+              ? _buildErrorView()
+              : _buildDetailBody(),
         ),
       ),
     );
@@ -941,8 +924,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
     final items = order['items'] is List
         ? List<Map<String, dynamic>>.from(
             (order['items'] as List).whereType<Map>().map(
-                  (e) => Map<String, dynamic>.from(e),
-                ),
+              (e) => Map<String, dynamic>.from(e),
+            ),
           )
         : <Map<String, dynamic>>[];
 
@@ -952,7 +935,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         paymentStatus.toLowerCase() == 'waiting for payment' && !isCanceled;
     final canUploadProof =
         deliveryStatus == 'Out for delivery' && !isCanceled && !isFinished;
-    final canCancel = !isCanceled &&
+    final canCancel =
+        !isCanceled &&
         !isFinished &&
         deliveryStatus != 'Out for delivery' &&
         deliveryStatus != 'Arrived';
@@ -980,10 +964,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
               decoration: BoxDecoration(
                 color: AppColors.charcoalVelvet,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.surfaceBorder,
-                  width: 0.8,
-                ),
+                border: Border.all(color: AppColors.surfaceBorder, width: 0.8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1116,10 +1097,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
               decoration: BoxDecoration(
                 color: AppColors.charcoalVelvet,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.surfaceBorder,
-                  width: 0.8,
-                ),
+                border: Border.all(color: AppColors.surfaceBorder, width: 0.8),
               ),
               child: Column(
                 children: [
@@ -1139,7 +1117,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const Divider(
+                      separatorBuilder: (_, _) => const Divider(
                         color: AppColors.surfaceBorder,
                         height: 1,
                         thickness: 0.8,
@@ -1218,7 +1196,9 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                               ),
                             ),
                             Text(
-                              paymentMethod == '-' ? 'Belum dipilih' : paymentMethod,
+                              paymentMethod == '-'
+                                  ? 'Belum dipilih'
+                                  : paymentMethod,
                               style: const TextStyle(
                                 color: AppColors.ivorySilk,
                                 fontSize: 12,
@@ -1266,7 +1246,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
                     side: BorderSide(
-                      color: AppColors.error.withOpacity(0.5),
+                      color: AppColors.error.withValues(alpha: 0.5),
                       width: 0.8,
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -1276,10 +1256,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                   ),
                   child: const TText(
                     'Batalkan Pesanan',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -1296,7 +1273,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
     required String orderStatus,
   }) {
     final isPaid = paymentStatus.toLowerCase() == 'paid off';
-    final isOut = deliveryStatus == 'Out for delivery' ||
+    final isOut =
+        deliveryStatus == 'Out for delivery' ||
         deliveryStatus == 'Arrived' ||
         orderStatus.toLowerCase() == 'finished';
     final isArrived =
@@ -1342,8 +1320,9 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         children: List.generate(steps.length, (i) {
           final step = steps[i];
           final isLast = i == steps.length - 1;
-          final dotColor =
-              step.done ? AppColors.champagneGold : AppColors.ashGreySubtle;
+          final dotColor = step.done
+              ? AppColors.champagneGold
+              : AppColors.ashGreySubtle;
 
           return IntrinsicHeight(
             child: Row(
@@ -1371,7 +1350,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                             width: 1,
                             margin: const EdgeInsets.symmetric(vertical: 4),
                             color: step.done && steps[i + 1].done
-                                ? AppColors.champagneGold.withOpacity(0.6)
+                                ? AppColors.champagneGold.withValues(alpha: 0.6)
                                 : AppColors.surfaceBorder,
                           ),
                         ),
@@ -1425,7 +1404,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         color: AppColors.charcoalVelvet,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.champagneGold.withOpacity(0.45),
+          color: AppColors.champagneGold.withValues(alpha: 0.45),
           width: 0.8,
         ),
       ),
@@ -1559,7 +1538,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         color: AppColors.charcoalVelvet,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.champagneGold.withOpacity(0.45),
+          color: AppColors.champagneGold.withValues(alpha: 0.45),
           width: 0.8,
         ),
       ),
@@ -1624,8 +1603,9 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
                             ? AppColors.ivorySilk
                             : AppColors.ashGrey,
                         fontSize: 13,
-                        fontWeight:
-                            selected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                       ),
                     ),
                   ],

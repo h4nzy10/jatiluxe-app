@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../constants/theme.dart';
 
 /// Lightweight localization layer.
@@ -55,8 +56,7 @@ class AppL10n {
         'Masuk untuk menjelajahi karya furnitur kayu terbaik',
     'Join to explore and order premium Jepara wood furniture.':
         'Gabung untuk menjelajah dan memesan furnitur kayu Jepara premium.',
-    'Open a digital showcase and market quality wood furniture directly to collectors.':
-        'Buka etalase digital dan pasarkan furnitur kayu berkualitas langsung ke kolektor.',
+    'Open a digital showcase and market quality wood furniture directly to collectors.': 'Buka etalase digital dan pasarkan furnitur kayu berkualitas langsung ke kolektor.',
     'Email': 'Email',
     'Password': 'Kata Sandi',
     'Login': 'Masuk',
@@ -128,7 +128,6 @@ class AppL10n {
     'Gagal memuat katalog': 'Failed to load catalog',
     'Belum ada furnitur di katalog': 'No furniture in the catalog yet',
     'Coba kata kunci atau kategori lain': 'Try another keyword or category',
-    'Detail produk segera tersedia': 'Product details coming soon',
     'Detail Produk': 'Product Details',
     'SPESIFIKASI KARYA': 'PIECE SPECIFICATIONS',
     'DESKRIPSI & DIMENSI': 'DESCRIPTION & DIMENSIONS',
@@ -137,7 +136,6 @@ class AppL10n {
     'Tambah ke Keranjang': 'Add to Cart',
     'Beli Langsung': 'Buy Now',
     'Produk ditambahkan ke keranjang': 'Product added to cart',
-    'Checkout segera tersedia': 'Checkout coming soon',
     'Gagal memuat detail produk': 'Failed to load product details',
     'Produk tidak ditemukan': 'Product not found',
     'ANDA MUNGKIN SUKA': 'YOU MAY ALSO LIKE',
@@ -182,8 +180,7 @@ class AppL10n {
         'Search furniture, carvings, or categories...',
     'Contoh: Meja Makan Kayu Solid Trembesi':
         'Example: Solid Trembesi Wood Dining Table',
-    'Sebutkan dimensi (P x L x T), teknik finishing kayu (natural oil, walnut), dan keunggulan serat.':
-        'Mention dimensions (W x D x H), wood finishing (natural oil, walnut), and grain highlights.',
+    'Sebutkan dimensi (P x L x T), teknik finishing kayu (natural oil, walnut), dan keunggulan serat.': 'Mention dimensions (W x D x H), wood finishing (natural oil, walnut), and grain highlights.',
     'Tambah Karya': 'Add Piece',
     'Hapus Karya': 'Delete Piece',
     'Tambah Karya Pertama': 'Add First Piece',
@@ -191,10 +188,8 @@ class AppL10n {
     'Perbarui Karya Kayu': 'Update Wood Piece',
     'Daftarkan Karya ke Etalase': 'List Piece in Catalog',
     'Belum Ada Koleksi Kayu': 'No Wood Collection Yet',
-    'Mulai daftarkan karya furnitur kayu Anda ke etalase untuk dilihat para kolektor.':
-        'Start listing your wood furniture pieces in the catalog for collectors to see.',
-    'Standar JatiLuxe: Setiap produk kayu yang didaftarkan wajib mencantumkan jenis kayu serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.':
-        'JatiLuxe standard: every registered wood product must state the wood type and be photographed in natural light without altering the wood grain color.',
+    'Mulai daftarkan karya furnitur kayu Anda ke etalase untuk dilihat para kolektor.': 'Start listing your wood furniture pieces in the catalog for collectors to see.',
+    'Standar JatiLuxe: Setiap produk kayu yang didaftarkan wajib mencantumkan jenis kayu serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.': 'JatiLuxe standard: every registered wood product must state the wood type and be photographed in natural light without altering the wood grain color.',
     'Nama Karya Mebel': 'Furniture Name',
     'Kategori': 'Category',
     'Jenis Kayu': 'Wood Type',
@@ -277,8 +272,7 @@ class AppL10n {
     'Format email tidak valid': 'Invalid email format',
     'Kata sandi saat ini wajib diisi untuk mengubah kata sandi.':
         'Current password is required to change your password.',
-    'Perubahan identitas dan foto workshop akan langsung tersinkron dengan katalog dan pesanan Anda.':
-        'Identity and workshop photo changes will sync instantly with your catalog and orders.',
+    'Perubahan identitas dan foto workshop akan langsung tersinkron dengan katalog dan pesanan Anda.': 'Identity and workshop photo changes will sync instantly with your catalog and orders.',
     'Gagal memuat profil workshop': 'Failed to load workshop profile',
     'Data profil workshop tidak ditemukan.':
         'Workshop profile data was not found.',
@@ -306,30 +300,29 @@ class AppL10n {
     'LANGKAH 3 DARI 4': 'STEP 3 OF 4',
     'LANGKAH 4 DARI 4': 'STEP 4 OF 4',
     'Kenali Ruang Kendali Toko': 'Get to Know Your Store Dashboard',
-    'Ringkasan menampilkan pendapatan, jumlah pesanan, dan kondisi etalase Anda dalam satu tampilan.':
-        'The overview shows your revenue, order count, and catalog status in one view.',
+    'Ringkasan menampilkan pendapatan, jumlah pesanan, dan kondisi etalase Anda dalam satu tampilan.': 'The overview shows your revenue, order count, and catalog status in one view.',
     'Pantau total pendapatan terverifikasi': 'Monitor total verified revenue',
-    'Cek koleksi aktif dan total stok kayu': 'Check active collections and wood stock',
+    'Cek koleksi aktif dan total stok kayu':
+        'Check active collections and wood stock',
     'Gunakan ringkasan untuk melihat pesanan terbaru':
         'Use the overview to see recent orders',
     'Bangun Etalase Berkualitas': 'Build a Quality Catalog',
-    'Tambah karya kayu pilihan lengkap dengan foto, kategori, spesifikasi, harga, dan stok.':
-        'Add quality wood pieces with photos, categories, specifications, prices, and stock.',
+    'Tambah karya kayu pilihan lengkap dengan foto, kategori, spesifikasi, harga, dan stok.': 'Add quality wood pieces with photos, categories, specifications, prices, and stock.',
     'Gunakan foto dengan pencahayaan alami': 'Use photos with natural lighting',
     'Isi dimensi dan teknik finishing di deskripsi':
         'Include dimensions and finishing technique in the description',
-    'Perbarui harga dan stok secara berkala': 'Update prices and stock regularly',
+    'Perbarui harga dan stok secara berkala':
+        'Update prices and stock regularly',
     'Kelola Pengiriman sampai Selesai': 'Manage Delivery Through Completion',
-    'Temukan pesanan pada tab Logistik, lalu awalui status pengiriman dan verifikasi bukti penerimaan pelanggan.':
-        'Find orders in the Logistics tab, track delivery status, and verify customer receipt proof.',
+    'Temukan pesanan pada tab Logistik, lalu awalui status pengiriman dan verifikasi bukti penerimaan pelanggan.': 'Find orders in the Logistics tab, track delivery status, and verify customer receipt proof.',
     'Tandai pesanan menjadi "Dikirim" saat barang keluar':
         'Mark an order as "Out for delivery" when the item ships',
-    'Lihat foto bukti yang diunggah pelanggan': 'View proof photos uploaded by the customer',
+    'Lihat foto bukti yang diunggah pelanggan':
+        'View proof photos uploaded by the customer',
     'Selesaikan transaksi setelah bukti terverifikasi':
         'Complete the transaction once proof is verified',
     'Rapikan Identitas Workshop': 'Polish Your Workshop Identity',
-    'Lengkapi profil dan foto workshop agar pembeli mengenal pengrajin di balik setiap karya.':
-        'Complete your profile and workshop photo so buyers know the artisan behind each piece.',
+    'Lengkapi profil dan foto workshop agar pembeli mengenal pengrajin di balik setiap karya.': 'Complete your profile and workshop photo so buyers know the artisan behind each piece.',
     'Isi nama, email, telepon, dan alamat galeri':
         'Fill in your name, email, phone, and gallery address',
     'Ganti kata sandi hanya dengan kata sandi saat ini':
@@ -342,7 +335,6 @@ class AppL10n {
     'Katalog JatiLuxe': 'JatiLuxe Catalog',
     'Koleksi Kayu': 'Wood Collection',
     'KARYA PILIHAN': 'SELECTED PIECE',
-    'Storefront Pelanggan siap dibangun': 'Customer storefront coming soon',
     'Keranjang': 'Cart',
     'Keranjang Saya': 'My Cart',
     'Pilih Semua': 'Select All',
@@ -360,35 +352,53 @@ class AppL10n {
     'Ya, Hapus': 'Yes, Remove',
     'Pilih minimal satu item': 'Select at least one item',
     '1 item dipilih': '1 item selected',
+
+    // Customer profile
+    'PROFIL SAYA': 'MY PROFILE',
+    'Profil': 'Profile',
+    'IDENTITAS PELANGGAN': 'CUSTOMER IDENTITY',
+    'Nama lengkap': 'Full name',
+    'Alamat': 'Address',
+    'FOTO PROFIL': 'PROFILE PHOTO',
+    'Foto profil berhasil diperbarui': 'Profile photo updated successfully',
+    'Profil berhasil disimpan': 'Profile saved successfully',
+    'Gagal memuat profil': 'Failed to load profile',
+    'Data profil tidak ditemukan.': 'Profile data was not found.',
+    'Lokasi belum diatur': 'Location not set yet',
+    'PELANGGAN JATILUXE': 'JATILUXE CUSTOMER',
+    'Perubahan profil Anda akan tersinkron dengan pesanan.':
+        'Your profile changes will sync with your orders.',
+    'ELEVASI AKUN': 'ACCOUNT UPGRADE',
+    'Daftar sebagai Penjual': 'Register As Seller',
+    'Daftar Sekarang': 'Register Now',
+    'Buka etalase digital dan pasarkan furnitur kayu berkualitas langsung ke kolektor.': 'Open a digital showcase and market quality wood furniture directly to collectors.',
+    'Konfirmasi Keluar': 'Logout Confirmation',
+    'Apakah Anda yakin ingin keluar dari akun ini?':
+        'Are you sure you want to log out of this account?',
   };
 
   /// Ordered phrase replacements for interpolated strings. Longer, more
   /// specific phrases are listed first so they are applied before fragments.
   static const List<(String, String)> _englishPhrases = [
-    (
-      'Apakah Anda yakin ingin menghapus ',
-      'Are you sure you want to delete '
-    ),
+    ('Nama lengkap wajib diisi', 'Full name is required'),
+    ('Apakah Anda yakin ingin menghapus ', 'Are you sure you want to delete '),
     (' dari katalog inventaris toko?', ' from the store inventory catalog?'),
-    (
-      'Pesanan no. ',
-      'Order no. '
-    ),
+    ('Pesanan no. ', 'Order no. '),
     (
       ' telah diterima dan diverifikasi. Konfirmasi untuk menyelesaikan transaksi?',
-      ' has been received and verified. Confirm to complete the transaction?'
+      ' has been received and verified. Confirm to complete the transaction?',
     ),
     (
       'Terlalu banyak percobaan gagal. Login kembali dalam ',
-      'Too many failed attempts. Try again in '
+      'Too many failed attempts. Try again in ',
     ),
     (
       'Login ditunda karena terlalu banyak percobaan gagal. Coba lagi dalam ',
-      'Login delayed due to too many failed attempts. Try again in '
+      'Login delayed due to too many failed attempts. Try again in ',
     ),
     (
       'Terlalu banyak kata sandi salah. Login ditunda selama ',
-      'Too many incorrect passwords. Login delayed for '
+      'Too many incorrect passwords. Login delayed for ',
     ),
     ('Email atau kata sandi salah. ', 'Incorrect email or password. '),
     ('Email atau kata sandi salah.', 'Incorrect email or password.'),
@@ -413,8 +423,10 @@ class AppL10n {
     ('Tunggu ', 'Wait '),
     ('No. Lacak', 'Tracking No.'),
     ('Pesanan #', 'Order #'),
-    (' pesanan telah selesai dan diterima kolektor',
-        ' orders completed and received by collectors'),
+    (
+      ' pesanan telah selesai dan diterima kolektor',
+      ' orders completed and received by collectors',
+    ),
     (' pengiriman aktif', ' active deliveries'),
     (' Desain Terdaftar', ' Designs Listed'),
     (' Desain', ' Designs'),
@@ -496,10 +508,7 @@ class TText extends StatelessWidget {
 class LanguageSwitcher extends StatelessWidget {
   final Color iconColor;
 
-  const LanguageSwitcher({
-    super.key,
-    this.iconColor = AppColors.ashGrey,
-  });
+  const LanguageSwitcher({super.key, this.iconColor = AppColors.ashGrey});
 
   @override
   Widget build(BuildContext context) {
