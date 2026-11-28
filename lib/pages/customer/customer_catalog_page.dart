@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../../constants/theme.dart';
@@ -54,6 +56,15 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage>
   }
 
   @override
+  void didUpdateWidget(covariant CustomerCatalogPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload with a fresh shuffle each time the user returns to this tab.
+    if (!oldWidget.isActive && widget.isActive) {
+      _fetchCatalog();
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -88,9 +99,13 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage>
       }
 
       final prodRes = results[0];
-      _products = prodRes is Map && prodRes['products'] is List
+      final products = prodRes is Map && prodRes['products'] is List
           ? List<dynamic>.from(prodRes['products'] as List)
           : <dynamic>[];
+      // Shuffle only on a user-visible load, never on a silent background poll,
+      // so the grid does not rearrange while the user is browsing it.
+      if (!silent) products.shuffle(Random());
+      _products = products;
 
       _applyFilter();
       setState(() => _isLoading = false);
