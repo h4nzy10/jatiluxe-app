@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../service/l10n.dart';
 import '../../utils/formatters.dart';
 
@@ -29,19 +30,27 @@ class CustomerCartPage extends StatefulWidget {
   /// Notifies the shell after cart mutations so its badge stays in sync.
   final VoidCallback? onCartChanged;
 
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
   const CustomerCartPage({
     super.key,
     required this.onCheckout,
     this.onProductSelected,
     this.onBrowseCatalog,
     this.onCartChanged,
+    this.isActive = true,
   });
 
   @override
   State<CustomerCartPage> createState() => _CustomerCartPageState();
 }
 
-class _CustomerCartPageState extends State<CustomerCartPage> {
+class _CustomerCartPageState extends State<CustomerCartPage>
+    with AutoRefresh<CustomerCartPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   List<dynamic> _items = [];
   List<dynamic> _products = [];
   final Set<int> _selectedIds = <int>{};
@@ -54,13 +63,16 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
   void initState() {
     super.initState();
     _fetchCart();
+    startAutoRefresh(() => _fetchCart(silent: true));
   }
 
-  Future<void> _fetchCart() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchCart({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -87,12 +99,17 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
       setState(() {
         _items = items;
         _products = catalog;
-        _selectedIds
-          ..clear()
-          ..addAll(ids);
+        if (silent) {
+          // Keep the user's checked items across background refreshes.
+          _selectedIds.removeWhere((id) => !ids.contains(id));
+        } else {
+          _selectedIds
+            ..clear()
+            ..addAll(ids);
+        }
         _isLoading = false;
       });
-      widget.onCartChanged?.call();
+      if (!silent) widget.onCartChanged?.call();
     } catch (e) {
       if (!mounted) return;
       setState(() {

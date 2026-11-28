@@ -115,9 +115,10 @@ class _SellerMainNavState extends State<SellerMainNav> {
       SellerDashboardPage(
         onNavigateToInventory: () => _onTabTapped(1),
         onNavigateToDelivery: () => _onTabTapped(2),
+        isActive: _currentIndex == 0,
       ),
-      const SellerInventoryPage(),
-      const SellerDeliveryPage(),
+      SellerInventoryPage(isActive: _currentIndex == 1),
+      SellerDeliveryPage(isActive: _currentIndex == 2),
       SellerProfilePage(
         onNavigateToInventory: () => _onTabTapped(1),
         onOpenOnboarding: _openOnboarding,

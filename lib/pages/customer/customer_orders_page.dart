@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../service/l10n.dart';
 import '../../utils/formatters.dart';
 import 'payment_page.dart';
@@ -17,13 +18,24 @@ import 'payment_page.dart';
 class CustomerOrdersPage extends StatefulWidget {
   final VoidCallback? onBrowseCatalog;
 
-  const CustomerOrdersPage({super.key, this.onBrowseCatalog});
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
+  const CustomerOrdersPage({
+    super.key,
+    this.onBrowseCatalog,
+    this.isActive = true,
+  });
 
   @override
   State<CustomerOrdersPage> createState() => CustomerOrdersPageState();
 }
 
-class CustomerOrdersPageState extends State<CustomerOrdersPage> {
+class CustomerOrdersPageState extends State<CustomerOrdersPage>
+    with AutoRefresh<CustomerOrdersPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   bool _isLoading = true;
   String? _errorMessage;
   List<Map<String, dynamic>> _orders = [];
@@ -40,17 +52,20 @@ class CustomerOrdersPageState extends State<CustomerOrdersPage> {
   void initState() {
     super.initState();
     _fetchOrders();
+    startAutoRefresh(() => _fetchOrders(silent: true));
   }
 
   /// Called by the shell when the Orders tab is selected. The page lives in an
   /// IndexedStack, so initState alone would leave a stale list after checkout.
   Future<void> refresh() => _fetchOrders();
 
-  Future<void> _fetchOrders() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchOrders({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -98,7 +113,7 @@ class CustomerOrdersPageState extends State<CustomerOrdersPage> {
         _isLoading = false;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       setState(() {
         _errorMessage = e.toString().replaceFirst('Exception: ', '');
         _isLoading = false;
@@ -578,7 +593,8 @@ class CustomerOrderDetailPage extends StatefulWidget {
       _CustomerOrderDetailPageState();
 }
 
-class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
+class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage>
+    with AutoRefresh<CustomerOrderDetailPage> {
   bool _isLoading = true;
   bool _isMutating = false;
   bool _hasChanges = false;
@@ -595,13 +611,16 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         ? Map<String, dynamic>.from(widget.initialSummary!)
         : null;
     _fetchOrderDetail();
+    startAutoRefresh(() => _fetchOrderDetail(silent: true));
   }
 
-  Future<void> _fetchOrderDetail() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchOrderDetail({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -633,7 +652,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         });
       }
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       setState(() {
         _errorMessage = e.toString().replaceFirst('Exception: ', '');
         _isLoading = false;

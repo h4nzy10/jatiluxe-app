@@ -406,11 +406,51 @@ class AppL10n {
     'Konfirmasi Keluar': 'Logout Confirmation',
     'Apakah Anda yakin ingin keluar dari akun ini?':
         'Are you sure you want to log out of this account?',
+
+    // Remaining customer screens
+    'Pilih armada. Status ini dipantau oleh toko sampai barang tiba.':
+        'Choose a courier. The store monitors this status until the item arrives.',
+    'Pilih metode pembayaran. Transaksi baru dianggap selesai saat toko konfirmasi.':
+        'Choose a payment method. The transaction is considered complete once the store confirms it.',
+    'PESANAN SAYA': 'MY ORDERS',
+    'Belum ada pesanan': 'No orders yet',
+    'Gagal memuat daftar pesanan': 'Failed to load orders',
+    'Pesanan furnitur jati Anda akan tampil di sini lengkap dengan status pengiriman.':
+        'Your teak furniture orders will appear here with their delivery status.',
+    'STATUS PESANAN': 'ORDER STATUS',
+    'NO. RESI PENGIRIMAN': 'TRACKING NUMBER',
+    'PELACAKAN PENGIRIMAN': 'DELIVERY TRACKING',
+    'RINCIAN PRODUK': 'PRODUCT DETAILS',
+    'Memuat rincian item...': 'Loading item details...',
+    'Batalkan Pesanan': 'Cancel Order',
+    'Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dikembalikan.':
+        'Are you sure you want to cancel this order? This action cannot be undone.',
+    'KONFIRMASI PENERIMAAN BARANG': 'CONFIRM GOODS RECEIPT',
+    'UNGGAH BUKTI PENERIMAAN': 'UPLOAD RECEIPT PROOF',
+    'Unggah foto barang yang telah Anda terima agar pengrajin dapat memverifikasi dan menyelesaikan pesanan.':
+        'Upload a photo of the received item so the artisan can verify and complete the order.',
+    'Pilih atau Ambil Foto Bukti': 'Choose or Take Proof Photo',
+    'Ganti Foto': 'Change Photo',
+    'Kirim Bukti Penerimaan': 'Submit Receipt Proof',
+
+    // Remaining seller screens
+    'Belum Ada Koleksi Jati': 'No Teak Collection Yet',
+    'Mulai daftarkan karya furnitur kayu jati Anda ke etalase untuk dilihat para kolektor.':
+        'Start listing your teak furniture pieces in the catalog for collectors to see.',
+    'Unggah Foto Mebel Jati': 'Upload Teak Furniture Photo',
+    'Foto karya mebel jati wajib diunggah':
+        'A photo of the teak furniture piece is required',
+    'Contoh: Meja Makan Jati Solid Trembesi':
+        'Example: Solid Trembesi Teak Dining Table',
+    'Standar JatiLuxe: Setiap produk kayu jati yang didaftarkan wajib mencantumkan jenis jati (TPK Perhutani / Jati Emas) serta difoto dengan pencahayaan alami tanpa manipulasi warna serat.':
+        'JatiLuxe standard: every listed teak product must state the teak type (TPK Perhutani / Jati Emas) and be photographed in natural lighting without altering the grain color.',
   };
 
   /// Ordered phrase replacements for interpolated strings. Longer, more
   /// specific phrases are listed first so they are applied before fragments.
   static const List<(String, String)> _englishPhrases = [
+    ('Gagal membuat pesanan: ', 'Failed to create order: '),
+    ('PESANAN #', 'ORDER #'),
     ('Nama lengkap wajib diisi', 'Full name is required'),
     ('Apakah Anda yakin ingin menghapus ', 'Are you sure you want to delete '),
     (' dari katalog inventaris toko?', ' from the store inventory catalog?'),

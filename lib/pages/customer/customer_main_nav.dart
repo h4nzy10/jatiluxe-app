@@ -68,6 +68,7 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             onProductSelected: (product) =>
                 _openProductDetail(context, product),
             onLogout: () => _logout(context),
+            isActive: _selectedIndex == 0,
           ),
           CustomerCartPage(
             onProductSelected: (product) =>
@@ -76,10 +77,12 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             onCartChanged: () => _refreshCartCount(),
             onCheckout: (selectedCartIds, total, items) =>
                 _openCheckoutFromCart(context, selectedCartIds, items),
+            isActive: _selectedIndex == 1,
           ),
           CustomerOrdersPage(
             key: _ordersKey,
             onBrowseCatalog: () => _onTabTapped(0),
+            isActive: _selectedIndex == 2,
           ),
           const CustomerProfilePage(),
         ],

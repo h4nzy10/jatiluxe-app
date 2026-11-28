@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:jatiluxe_app/service/l10n.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../utils/formatters.dart';
 
 class SellerDeliveryPage extends StatefulWidget {
-  const SellerDeliveryPage({super.key});
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
+  const SellerDeliveryPage({super.key, this.isActive = true});
 
   @override
   State<SellerDeliveryPage> createState() => _SellerDeliveryPageState();
 }
 
 class _SellerDeliveryPageState extends State<SellerDeliveryPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutoRefresh<SellerDeliveryPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   bool _isLoading = true;
   String? _errorMessage;
   List<dynamic> _deliveries = [];
@@ -27,6 +34,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _fetchDeliveries();
+    startAutoRefresh(() => _fetchDeliveries(silent: true));
   }
 
   @override
@@ -35,11 +43,13 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
     super.dispose();
   }
 
-  Future<void> _fetchDeliveries() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchDeliveries({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
     try {
       final res = await ApiService.get('/api/v1/seller-deliveries');
       if (!mounted) return;
@@ -48,7 +58,7 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
         _isLoading = false;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       setState(() {
         _errorMessage = e.toString().replaceFirst('Exception: ', '');
         _isLoading = false;

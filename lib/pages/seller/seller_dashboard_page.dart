@@ -3,23 +3,32 @@ import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../utils/formatters.dart';
 
 class SellerDashboardPage extends StatefulWidget {
   final VoidCallback? onNavigateToInventory;
   final VoidCallback? onNavigateToDelivery;
 
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
   const SellerDashboardPage({
     super.key,
     this.onNavigateToInventory,
     this.onNavigateToDelivery,
+    this.isActive = true,
   });
 
   @override
   State<SellerDashboardPage> createState() => _SellerDashboardPageState();
 }
 
-class _SellerDashboardPageState extends State<SellerDashboardPage> {
+class _SellerDashboardPageState extends State<SellerDashboardPage>
+    with AutoRefresh<SellerDashboardPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -37,13 +46,16 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
   void initState() {
     super.initState();
     _fetchDashboardData();
+    startAutoRefresh(() => _fetchDashboardData(silent: true));
   }
 
-  Future<void> _fetchDashboardData() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchDashboardData({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -91,7 +103,7 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
 
       setState(() => _isLoading = false);
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       setState(() {
         _errorMessage = e.toString().replaceFirst('Exception: ', '');
         _isLoading = false;

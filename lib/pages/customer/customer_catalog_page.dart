@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../service/l10n.dart';
 import '../../utils/formatters.dart';
 
@@ -14,17 +15,25 @@ class CustomerCatalogPage extends StatefulWidget {
   /// Optional logout action rendered in the catalog AppBar.
   final Future<void> Function()? onLogout;
 
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
   const CustomerCatalogPage({
     super.key,
     required this.onProductSelected,
     this.onLogout,
+    this.isActive = true,
   });
 
   @override
   State<CustomerCatalogPage> createState() => _CustomerCatalogPageState();
 }
 
-class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
+class _CustomerCatalogPageState extends State<CustomerCatalogPage>
+    with AutoRefresh<CustomerCatalogPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -40,6 +49,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
   void initState() {
     super.initState();
     _fetchCatalog();
+    startAutoRefresh(() => _fetchCatalog(silent: true));
     _searchController.addListener(_applyFilter);
   }
 
@@ -49,11 +59,13 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
     super.dispose();
   }
 
-  Future<void> _fetchCatalog() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchCatalog({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -83,7 +95,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage> {
       _applyFilter();
       setState(() => _isLoading = false);
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       final message = e.toString().replaceFirst('Exception: ', '');
       final isEmptyCatalog =
           message.toLowerCase().contains('empty') || message.contains('404');

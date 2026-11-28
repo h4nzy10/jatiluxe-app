@@ -4,16 +4,24 @@ import 'package:jatiluxe_app/service/l10n.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/theme.dart';
 import '../../service/api.dart';
+import '../../service/auto_refresh.dart';
 import '../../utils/formatters.dart';
 
 class SellerInventoryPage extends StatefulWidget {
-  const SellerInventoryPage({super.key});
+  /// False while this tab is not visible, so it does not poll in the background.
+  final bool isActive;
+
+  const SellerInventoryPage({super.key, this.isActive = true});
 
   @override
   State<SellerInventoryPage> createState() => _SellerInventoryPageState();
 }
 
-class _SellerInventoryPageState extends State<SellerInventoryPage> {
+class _SellerInventoryPageState extends State<SellerInventoryPage>
+    with AutoRefresh<SellerInventoryPage> {
+  @override
+  bool get autoRefreshEnabled => widget.isActive;
+
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -29,6 +37,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
   void initState() {
     super.initState();
     _fetchProducts();
+    startAutoRefresh(() => _fetchProducts(silent: true));
     _searchController.addListener(_applyFilter);
   }
 
@@ -38,11 +47,13 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
     super.dispose();
   }
 
-  Future<void> _fetchProducts() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _fetchProducts({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final results = await Future.wait([
@@ -84,7 +95,7 @@ class _SellerInventoryPageState extends State<SellerInventoryPage> {
       _applyFilter();
       setState(() => _isLoading = false);
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || silent) return;
       final err = e.toString().toLowerCase();
       if (err.contains('empty') || err.contains('404')) {
         setState(() {
