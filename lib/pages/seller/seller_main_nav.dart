@@ -217,7 +217,7 @@ class _SellerMainNavState extends State<SellerMainNav> {
       case 3:
         return 'PROFIL TOKO';
       default:
-        return 'JATILUXE';
+        return 'JatiLuxe';
     }
   }
 

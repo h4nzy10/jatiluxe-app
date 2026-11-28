@@ -115,8 +115,7 @@ class AppL10n {
     'Panduan Toko': 'Store Guide',
     'Bahasa / Language': 'Language / Bahasa',
     'Periksa koneksi server Anda': 'Check your server connection',
-    'J A T I L U X E': 'J A T I L U X E',
-    'JATILUXE': 'JATILUXE',
+    'JatiLuxe': 'JatiLuxe',
     '✦': '✦',
 
     // Customer catalog

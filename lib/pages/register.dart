@@ -245,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: AppColors.obsidianBlack,
       appBar: AppBar(
-        title: const TText('J A T I L U X E'),
+        title: const TText('JatiLuxe'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
           onPressed: () => Navigator.pop(context),

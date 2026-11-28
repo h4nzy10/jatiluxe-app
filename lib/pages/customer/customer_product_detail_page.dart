@@ -335,7 +335,7 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
     int stock,
   ) {
     return _buildSectionCard(
-      title: 'JATILUXE',
+      title: 'JatiLuxe',
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -359,7 +359,7 @@ class _CustomerProductDetailPageState extends State<CustomerProductDetailPage> {
                 border: Border.all(color: AppColors.warmBronze, width: 0.8),
               ),
               child: const TText(
-                'JATILUXE',
+                'JatiLuxe',
                 style: TextStyle(
                   color: AppColors.champagneGold,
                   fontSize: 9,
