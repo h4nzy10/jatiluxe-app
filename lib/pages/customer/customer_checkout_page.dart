@@ -15,6 +15,7 @@ import 'payment_page.dart';
 /// replaces itself with [PaymentPage] for settlement.
 class CheckoutPage extends StatefulWidget {
   final List<Map<String, dynamic>> items;
+  final List<int>? selectedCartIds;
   final String? initialAddress;
   final VoidCallback? onOrderCreated;
   final String? initialPaymentMethod;
@@ -23,6 +24,7 @@ class CheckoutPage extends StatefulWidget {
   const CheckoutPage({
     super.key,
     required this.items,
+    this.selectedCartIds,
     this.initialAddress,
     this.onOrderCreated,
     this.initialPaymentMethod,
@@ -53,6 +55,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
     _selectedPayment = widget.initialPaymentMethod ?? 'transfer';
     _selectedDelivery = 'express';
+    _loadProfileAddress();
+  }
+
+  Future<void> _loadProfileAddress() async {
+    try {
+      final response = await ApiService.get('/api/v1/profile');
+      if (!mounted) return;
+
+      final user = response is Map ? response['user'] : null;
+      final address = user is Map ? (user['alamat'] ?? '').toString().trim() : '';
+      if (address.isEmpty || _addressController.text.trim().isNotEmpty) return;
+
+      setState(() => _addressController.text = address);
+    } catch (_) {
+      // Address stays optional; checkout does not depend on the profile call.
+    }
   }
 
   @override
@@ -62,6 +80,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _nextStep() {
+    if (_activeStep == 0 && !(_formKey.currentState?.validate() ?? true)) {
+      return;
+    }
     setState(() {
       _activeStep += 1;
       _addressError = '';
@@ -88,22 +109,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
 
     try {
+      final isCartCheckout =
+          widget.selectedCartIds != null && widget.selectedCartIds!.isNotEmpty;
+
       final itemsPayload = widget.items.map((item) {
         return {
-          'id_product': (item['id_product'] ?? item['product_id']) as int,
-          'quantity': (item['quantity'] ?? 1) as int,
+          'id_product': _intOf(item['id_product'] ?? item['product_id']),
+          'quantity': _intOf(item['quantity'], fallback: 1),
         };
       }).toList();
 
       final response = await ApiService.post(
-        widget.items.length == 1 && widget.initialAddress != null
-            ? '/api/v1/order'
-            : '/api/v1/order/partial',
-        {
-          'items': itemsPayload,
-          'shipping_address': _addressController.text.trim(),
-          'payment_method': _selectedPayment,
-        },
+        isCartCheckout ? '/api/v1/order/partial' : '/api/v1/order',
+        isCartCheckout
+            ? {'selected_cart_ids': widget.selectedCartIds}
+            : {
+                'items': itemsPayload,
+                'shipping_address': _addressController.text.trim(),
+                'payment_method': _selectedPayment,
+              },
       );
 
       final orderId = (response is Map && response['order'] is Map)
@@ -176,15 +200,26 @@ class _CheckoutPageState extends State<CheckoutPage> {
     widget.onOrderCreated?.call();
   }
 
+  int _intOf(dynamic value, {int fallback = 0}) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? fallback;
+  }
+
+  num _numOf(dynamic value) => num.tryParse(value?.toString() ?? '') ?? 0;
+
   int get _itemCount => widget.items.length;
 
-  num get _subtotal => widget.items
-      .map((i) => (i['price'] ?? 0) * (i['quantity'] ?? 0))
-      .fold(0, (a, b) => a + b);
+  num get _subtotal => widget.items.fold<num>(
+        0,
+        (sum, item) =>
+            sum + _numOf(item['price']) * _intOf(item['quantity'], fallback: 1),
+      );
 
   num get _total => _subtotal;
 
-  int _quantityOf(Map<String, dynamic> item) => (item['quantity'] ?? 1) as int;
+  int _quantityOf(Map<String, dynamic> item) =>
+      _intOf(item['quantity'], fallback: 1);
 
   String _cleanImage(String? url) {
     if (url == null || url.trim().isEmpty) return '';
@@ -210,7 +245,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
           actions: const [LanguageSwitcher()],
         ),
-        body: _buildBody(context),
+        body: Form(
+          key: _formKey,
+          child: _buildBody(context),
+        ),
       ),
     );
   }
@@ -220,7 +258,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       children: [
         _buildStepRibbon(),
         const SizedBox(height: 18),
-        _buildContent(),
+        Expanded(child: _buildContent()),
         const SizedBox(height: 24),
       ],
     );
@@ -301,7 +339,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             const SizedBox(height: 8),
             const TText(
-              'Masukkan alamat pengiriman. Tinggal disalin dari profil toko saat ada.',
+              'Alamat dari profil pelanggan sudah terisi otomatis. Boleh diubah jika perlu.',
               style: TextStyle(
                 color: AppColors.ashGrey,
                 fontSize: 12,
@@ -340,7 +378,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       cursorColor: AppColors.champagneGold,
       maxLines: 2,
       decoration: InputDecoration(
-        hintText: 'Alamat lengkap (dari profil toko)',
+        hintText: 'Alamat dari profil pelanggan',
         hintStyle: const TextStyle(
           color: AppColors.ashGreySubtle,
           fontSize: 13,
@@ -360,12 +398,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           borderSide: BorderSide(color: AppColors.champagneGold, width: 1),
         ),
       ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Alamat wajib diisi';
-        }
-        return null;
-      },
     );
   }
 
@@ -760,7 +792,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Column(
       children: widget.items.map((item) {
         final qty = _quantityOf(item);
-        final price = item['price'] ?? 0;
+        final price = _numOf(item['price']);
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: Row(
@@ -843,14 +875,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       ],
                     ),
                   ],
-                ),
-              ),
-              Text(
-                CurrencyFormat.toRupiah(price * qty),
-                style: const TextStyle(
-                  color: AppColors.champagneGoldLight,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

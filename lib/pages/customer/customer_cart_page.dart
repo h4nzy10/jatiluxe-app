@@ -14,7 +14,11 @@ import '../../utils/formatters.dart';
 class CustomerCartPage extends StatefulWidget {
   /// Receives checked cart detail IDs and the computed total so the shell can
   /// start checkout without reading the cart again.
-  final void Function(List<int> selectedCartIds, num total, dynamic) onCheckout;
+  final void Function(
+    List<int> selectedCartIds,
+    num total,
+    List<Map<String, dynamic>> items,
+  ) onCheckout;
 
   /// Called when a cart item's product card is tapped.
   final void Function(Map<String, dynamic> product)? onProductSelected;
@@ -718,10 +722,20 @@ class _CustomerCartPageState extends State<CustomerCartPage> {
     }
 
     final ids = _selectedIds.toList()..sort();
-    final items = _items.where((item) {
-      final id = int.tryParse(item['cart_detail_id']?.toString() ?? '');
-      return id != null && ids.contains(id);
-    }).toList();
+    final items = _items
+        .map(_asMap)
+        .where((item) => ids.contains(_itemId(item)))
+        .map((item) {
+          // Cart rows carry cart_detail_id, not product_id. Fill it from the
+          // catalog match so checkout can submit a valid direct-order payload.
+          final product = _matchedProduct(item);
+          return <String, dynamic>{
+            ...item,
+            'id_product': product?['id_product'] ?? item['id_product'],
+            'picture': product?['picture'] ?? item['picture'],
+          };
+        })
+        .toList();
     widget.onCheckout(ids, _selectedTotal, items);
   }
 

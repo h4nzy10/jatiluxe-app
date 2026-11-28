@@ -3,13 +3,18 @@ import 'package:jatiluxe_app/service/l10n.dart';
 import '../constants/theme.dart';
 import '../service/api.dart';
 import 'login.dart';
+import 'seller/seller_main_nav.dart';
 
 class RegisterPage extends StatefulWidget {
   final bool initialIsSeller;
+  final bool elevateMode;
+  final String? currentEmail;
 
   const RegisterPage({
     super.key,
     this.initialIsSeller = false,
+    this.elevateMode = false,
+    this.currentEmail,
   });
 
   @override
@@ -32,10 +37,15 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
 
+  bool get _isElevatingSeller => widget.elevateMode && _isSeller;
+
   @override
   void initState() {
     super.initState();
     _isSeller = widget.initialIsSeller;
+    if (widget.elevateMode) {
+      _emailController.text = widget.currentEmail?.trim() ?? '';
+    }
   }
 
   @override
@@ -51,6 +61,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_isElevatingSeller) {
+      await _handleUpgrade();
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -82,6 +97,53 @@ class _RegisterPageState extends State<RegisterPage> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  Future<void> _handleUpgrade() async {
+    setState(() => _isLoading = true);
+    try {
+      final response = await ApiService.put('/api/v1/account/upgrade-seller', {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text,
+      });
+
+      final token = response is Map ? response['token']?.toString() : null;
+      if (token == null || token.isEmpty) {
+        throw Exception('Token sesi tidak diterima dari server');
+      }
+
+      await ApiService.saveToken(token);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.surfaceElevated,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(
+              color: AppColors.champagneGold,
+              width: 0.8,
+            ),
+          ),
+          content: const TText(
+            'Akun berhasil ditingkatkan menjadi penjual',
+            style: TextStyle(color: AppColors.ivorySilk, fontSize: 13),
+          ),
+        ),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const SellerMainNav()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -200,7 +262,11 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 // Header Title
                 TText(
-                  _isSeller ? 'Register As Seller' : 'Register As Customer',
+                  _isElevatingSeller
+                      ? 'Elevasi Akun'
+                      : _isSeller
+                      ? 'Register As Seller'
+                      : 'Register As Customer',
                   style: const TextStyle(
                     color: AppColors.ivorySilk,
                     fontSize: 24,
@@ -209,7 +275,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 6),
                 TText(
-                  _isSeller
+                  _isElevatingSeller
+                      ? 'Gunakan email dan kata sandi akun pelanggan Anda untuk membuka etalase penjual.'
+                      : _isSeller
                       ? 'Open a digital showcase and market quality wood furniture directly to collectors.'
                       : 'Join to explore and order premium Jepara wood furniture.',
                   style: const TextStyle(
@@ -327,31 +395,39 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 28),
 
-                // Name Field
-                _buildFieldLabel(_isSeller ? 'Store Name' : 'Your Name'),
-                TextFormField(
-                  controller: _nameController,
-                  style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
-                  cursorColor: AppColors.champagneGold,
-                  decoration: InputDecoration(
-                    hintText: _isSeller ? 'Example: Galeri Jati Makmur' : 'Full name',
-                    prefixIcon: Icon(
-                      _isSeller ? Icons.storefront_outlined : Icons.person_outline_rounded,
-                      color: AppColors.ashGreySubtle,
-                      size: 18,
+                if (!_isElevatingSeller) ...[
+                  // Name Field
+                  _buildFieldLabel(_isSeller ? 'Store Name' : 'Your Name'),
+                  TextFormField(
+                    controller: _nameController,
+                    style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
+                    cursorColor: AppColors.champagneGold,
+                    decoration: InputDecoration(
+                      hintText: _isSeller ? 'Example: Galeri Jati Makmur' : 'Full name',
+                      prefixIcon: Icon(
+                        _isSeller ? Icons.storefront_outlined : Icons.person_outline_rounded,
+                        color: AppColors.ashGreySubtle,
+                        size: 18,
+                      ),
                     ),
+                    validator: (val) => val == null || val.trim().isEmpty ? 'Name is required' : null,
                   ),
-                  validator: (val) => val == null || val.trim().isEmpty ? 'Name is required' : null,
-                ),
 
-                const SizedBox(height: 18),
+                  const SizedBox(height: 18),
+                ],
 
                 // Email Field
                 _buildFieldLabel('Email'),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
+                  enabled: !_isElevatingSeller,
+                  style: TextStyle(
+                    color: _isElevatingSeller
+                        ? AppColors.ashGrey
+                        : AppColors.ivorySilk,
+                    fontSize: 14,
+                  ),
                   cursorColor: AppColors.champagneGold,
                   decoration: const InputDecoration(
                     hintText: 'example@email.com',
@@ -371,60 +447,68 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 18),
 
-                // Phone Number Field
-                _buildFieldLabel('Phone Number'),
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
-                  cursorColor: AppColors.champagneGold,
-                  decoration: const InputDecoration(
-                    hintText: '62812xxxxxxxx',
-                    prefixIcon: Icon(
-                      Icons.phone_outlined,
-                      color: AppColors.ashGreySubtle,
-                      size: 18,
-                    ),
-                  ),
-                  validator: (val) => val == null || val.trim().isEmpty ? 'Phone number is required' : null,
-                ),
-
-                const SizedBox(height: 18),
-
-                // Address Field
-                _buildFieldLabel(_isSeller ? 'Workshop / Gallery Address' : 'Shipping Address'),
-                TextFormField(
-                  controller: _addressController,
-                  maxLines: 2,
-                  style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
-                  cursorColor: AppColors.champagneGold,
-                  decoration: InputDecoration(
-                    hintText: _isSeller
-                        ? 'Jl. Pengrajin No. XX, Jepara'
-                        : 'Shipping Address',
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 24),
-                      child: Icon(
-                        Icons.location_on_outlined,
+                if (!_isElevatingSeller) ...[
+                  // Phone Number Field
+                  _buildFieldLabel('Phone Number'),
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
+                    cursorColor: AppColors.champagneGold,
+                    decoration: const InputDecoration(
+                      hintText: '62812xxxxxxxx',
+                      prefixIcon: Icon(
+                        Icons.phone_outlined,
                         color: AppColors.ashGreySubtle,
                         size: 18,
                       ),
                     ),
+                    validator: (val) => val == null || val.trim().isEmpty ? 'Phone number is required' : null,
                   ),
-                  validator: (val) => val == null || val.trim().isEmpty ? 'Address is required' : null,
-                ),
 
-                const SizedBox(height: 18),
+                  const SizedBox(height: 18),
+                ],
+
+                if (!_isElevatingSeller) ...[
+                  // Address Field
+                  _buildFieldLabel(_isSeller ? 'Workshop / Gallery Address' : 'Shipping Address'),
+                  TextFormField(
+                    controller: _addressController,
+                    maxLines: 2,
+                    style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
+                    cursorColor: AppColors.champagneGold,
+                    decoration: InputDecoration(
+                      hintText: _isSeller
+                          ? 'Jl. Pengrajin No. XX, Jepara'
+                          : 'Shipping Address',
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(bottom: 24),
+                        child: Icon(
+                          Icons.location_on_outlined,
+                          color: AppColors.ashGreySubtle,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    validator: (val) => val == null || val.trim().isEmpty ? 'Address is required' : null,
+                  ),
+
+                  const SizedBox(height: 18),
+                ],
 
                 // Password Field
-                _buildFieldLabel('Password'),
+                _buildFieldLabel(
+                  _isElevatingSeller ? 'Kata Sandi Akun Pelanggan' : 'Password',
+                ),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
                   cursorColor: AppColors.champagneGold,
                   decoration: InputDecoration(
-                    hintText: 'Minimal 6 characters',
+                    hintText: _isElevatingSeller
+                        ? 'Masukkan kata sandi akun pelanggan Anda'
+                        : 'Minimal 6 characters',
                     prefixIcon: const Icon(
                       Icons.lock_outline_rounded,
                       color: AppColors.ashGreySubtle,
@@ -441,42 +525,46 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (val) {
                     if (val == null || val.isEmpty) return 'Password is required';
-                    if (val.length < 6) return 'Password must be at least 6 characters';
+                    if (!_isElevatingSeller && val.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 18),
 
-                // Confirm Password Field
-                _buildFieldLabel('Confirm Password'),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: !_isConfirmPasswordVisible,
-                  style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
-                  cursorColor: AppColors.champagneGold,
-                  decoration: InputDecoration(
-                    hintText: 'Repeat your password',
-                    prefixIcon: const Icon(
-                      Icons.lock_outline_rounded,
-                      color: AppColors.ashGreySubtle,
-                      size: 18,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isConfirmPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                if (!_isElevatingSeller) ...[
+                  // Confirm Password Field
+                  _buildFieldLabel('Confirm Password'),
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: !_isConfirmPasswordVisible,
+                    style: const TextStyle(color: AppColors.ivorySilk, fontSize: 14),
+                    cursorColor: AppColors.champagneGold,
+                    decoration: InputDecoration(
+                      hintText: 'Repeat your password',
+                      prefixIcon: const Icon(
+                        Icons.lock_outline_rounded,
                         color: AppColors.ashGreySubtle,
                         size: 18,
                       ),
-                      onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isConfirmPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                          color: AppColors.ashGreySubtle,
+                          size: 18,
+                        ),
+                        onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      ),
                     ),
+                    validator: (val) {
+                      if (val == null || val.isEmpty) return 'Confirm password is required';
+                      if (val != _passwordController.text) return 'Password does not match';
+                      return null;
+                    },
                   ),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) return 'Confirm password is required';
-                    if (val != _passwordController.text) return 'Password does not match';
-                    return null;
-                  },
-                ),
+                ],
 
                 const SizedBox(height: 32),
 
@@ -506,7 +594,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           )
                         : TText(
-                            _isSeller ? 'Register As Seller' : 'Register Account',
+                            _isElevatingSeller
+                                ? 'Tingkatkan ke Penjual'
+                                : _isSeller
+                                ? 'Register As Seller'
+                                : 'Register Account',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,

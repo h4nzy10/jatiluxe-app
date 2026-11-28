@@ -1,7 +1,7 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../constants/theme.dart';
 import '../../service/api.dart';
@@ -20,10 +20,10 @@ class CustomerOrdersPage extends StatefulWidget {
   const CustomerOrdersPage({super.key, this.onBrowseCatalog});
 
   @override
-  State<CustomerOrdersPage> createState() => _CustomerOrdersPageState();
+  State<CustomerOrdersPage> createState() => CustomerOrdersPageState();
 }
 
-class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
+class CustomerOrdersPageState extends State<CustomerOrdersPage> {
   bool _isLoading = true;
   String? _errorMessage;
   List<Map<String, dynamic>> _orders = [];
@@ -41,6 +41,10 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
     super.initState();
     _fetchOrders();
   }
+
+  /// Called by the shell when the Orders tab is selected. The page lives in an
+  /// IndexedStack, so initState alone would leave a stale list after checkout.
+  Future<void> refresh() => _fetchOrders();
 
   Future<void> _fetchOrders() async {
     setState(() {
@@ -772,19 +776,47 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
 
     if (source == null) return;
 
-    final picked = await picker.pickImage(
-      source: source,
-      maxWidth: 1280,
-      maxHeight: 1280,
-      imageQuality: 85,
-    );
+    if (!kIsWeb && source == ImageSource.camera) {
+      final status = await Permission.camera.request();
+      if (status.isPermanentlyDenied) {
+        _showSnack(
+          'Izin kamera ditolak. Aktifkan dari pengaturan perangkat.',
+          isError: true,
+          actionLabel: 'Pengaturan',
+          onAction: openAppSettings,
+        );
+        return;
+      }
+      if (!status.isGranted) {
+        _showSnack(
+          'Izin kamera diperlukan untuk mengambil foto',
+          isError: true,
+        );
+        return;
+      }
+    }
 
-    if (picked != null && mounted) {
+    try {
+      final picked = await picker.pickImage(
+        source: source,
+        maxWidth: 1280,
+        maxHeight: 1280,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+
       final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
         _proofFile = picked;
         _proofBytes = bytes;
       });
+    } catch (e) {
+      if (!mounted) return;
+      _showSnack(
+        'Gagal mengambil foto: ${e.toString().replaceFirst('Exception: ', '')}',
+        isError: true,
+      );
     }
   }
 
@@ -819,7 +851,12 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
     }
   }
 
-  void _showSnack(String message, {required bool isError}) {
+  void _showSnack(
+    String message, {
+    required bool isError,
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
@@ -831,10 +868,17 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
             width: 0.8,
           ),
         ),
-        content: Text(
+        content: TText(
           message,
           style: const TextStyle(color: AppColors.ivorySilk, fontSize: 13),
         ),
+        action: actionLabel != null && onAction != null
+            ? SnackBarAction(
+                label: actionLabel.tr(context),
+                textColor: AppColors.champagneGold,
+                onPressed: onAction,
+              )
+            : null,
       ),
     );
   }
@@ -1422,13 +1466,22 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
           ),
           const SizedBox(height: 16),
           if (_proofBytes != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.memory(
-                _proofBytes!,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 220),
+                  child: AspectRatio(
+                    aspectRatio: 9 / 16,
+                    child: ColoredBox(
+                      color: AppColors.surfaceElevated,
+                      child: Image.memory(
+                        _proofBytes!,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),

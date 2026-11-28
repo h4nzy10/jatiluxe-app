@@ -345,7 +345,11 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
   Future<void> _openSellerRegistration() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const RegisterSellerPage()),
+      MaterialPageRoute(
+        builder: (_) => RegisterSellerPage(
+          email: _emailController.text.trim(),
+        ),
+      ),
     );
     if (!mounted) return;
     await _fetchProfile();

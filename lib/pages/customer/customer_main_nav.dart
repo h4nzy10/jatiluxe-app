@@ -21,6 +21,8 @@ class CustomerMainNav extends StatefulWidget {
 class _CustomerMainNavState extends State<CustomerMainNav> {
   int _selectedIndex = 0;
   int _cartCount = 0;
+  final GlobalKey<CustomerOrdersPageState> _ordersKey =
+      GlobalKey<CustomerOrdersPageState>();
 
   @override
   void initState() {
@@ -46,6 +48,9 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
   void _onTabTapped(int index) {
     setState(() => _selectedIndex = index);
     _refreshCartCount();
+    if (index == 2) {
+      _ordersKey.currentState?.refresh();
+    }
   }
 
   @override
@@ -70,9 +75,12 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
             onBrowseCatalog: () => _onTabTapped(0),
             onCartChanged: () => _refreshCartCount(),
             onCheckout: (selectedCartIds, total, items) =>
-                _openCheckoutFromCart(context, items),
+                _openCheckoutFromCart(context, selectedCartIds, items),
           ),
-          CustomerOrdersPage(onBrowseCatalog: () => _onTabTapped(0)),
+          CustomerOrdersPage(
+            key: _ordersKey,
+            onBrowseCatalog: () => _onTabTapped(0),
+          ),
           const CustomerProfilePage(),
         ],
       ),
@@ -139,8 +147,13 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
         builder: (_) => CustomerProductDetailPage(
           productId: (product['id_product'] ?? '').toString(),
           initialProduct: product,
-          onBuyNow: (product, quantity) =>
-              _openCheckout(context, [product], quantity: quantity),
+          onBuyNow: (product, quantity) => _openCheckout(
+            context,
+            [
+              <String, dynamic>{...product, 'quantity': quantity},
+            ],
+            quantity: quantity,
+          ),
         ),
       ),
     );
@@ -172,6 +185,7 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
 
   Future<void> _openCheckoutFromCart(
     BuildContext context,
+    List<int> selectedCartIds,
     List<Map<String, dynamic>> items,
   ) async {
     await Navigator.push(
@@ -179,6 +193,7 @@ class _CustomerMainNavState extends State<CustomerMainNav> {
       MaterialPageRoute(
         builder: (_) => CheckoutPage(
           items: items,
+          selectedCartIds: selectedCartIds,
           sourceLabel: 'Keranjang',
           onOrderCreated: () => _refreshCartCount(),
         ),

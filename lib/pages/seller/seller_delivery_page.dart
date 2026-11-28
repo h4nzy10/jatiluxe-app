@@ -121,78 +121,101 @@ class _SellerDeliveryPageState extends State<SellerDeliveryPage>
 
     showDialog(
       context: context,
-      builder: (ctx) => Dialog(
-        backgroundColor: AppColors.charcoalVelvet,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.surfaceBorder, width: 0.8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const TText(
-                'BUKTI PENERIMAAN BARANG',
-                style: TextStyle(
-                  color: AppColors.ashGreySubtle,
-                  fontSize: 11,
-                  letterSpacing: 2.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  clean,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      height: 200,
-                      alignment: Alignment.center,
-                      child: const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1.8,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.champagneGold),
+      builder: (ctx) {
+        final size = MediaQuery.of(ctx).size;
+        return Dialog(
+          backgroundColor: AppColors.charcoalVelvet,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: AppColors.surfaceBorder, width: 0.8),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: size.width - 40,
+              maxHeight: size.height - 48,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const TText(
+                    'BUKTI PENERIMAAN BARANG',
+                    style: TextStyle(
+                      color: AppColors.ashGreySubtle,
+                      fontSize: 11,
+                      letterSpacing: 2.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: size.height - 200),
+                      child: AspectRatio(
+                        aspectRatio: 9 / 16,
+                        child: InteractiveViewer(
+                          minScale: 0.5,
+                          maxScale: 4,
+                          child: Image.network(
+                            clean,
+                            fit: BoxFit.contain,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) return child;
+                              return const Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.8,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.champagneGold),
+                                  ),
+                                ),
+                              );
+                            },
+                            errorBuilder: (_, _, _) => Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceElevated,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const TText(
+                                'Gagal memuat gambar bukti',
+                                style: TextStyle(
+                                  color: AppColors.ashGrey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  errorBuilder: (_, _, _) => Container(
-                    height: 160,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceElevated,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const TText(
-                      'Gagal memuat gambar bukti',
-                      style: TextStyle(color: AppColors.ashGrey, fontSize: 12),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const TText(
-                    'Tutup',
-                    style: TextStyle(color: AppColors.champagneGold, fontSize: 13),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const TText(
+                        'Tutup',
+                        style: TextStyle(
+                          color: AppColors.champagneGold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

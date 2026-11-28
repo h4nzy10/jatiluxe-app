@@ -370,6 +370,19 @@ class AppL10n {
     'Lihat Pesanan': 'View Order',
     'Gagal memuat detail pesanan': 'Failed to load order details',
     'Data pesanan tidak ditemukan': 'Order data was not found',
+    'Alamat dari profil pelanggan sudah terisi otomatis. Boleh diubah jika perlu.': 'Your customer profile address is filled in automatically. You may change it if needed.',
+    'Alamat dari profil pelanggan': 'Address from customer profile',
+
+    // Account elevation
+    'Elevasi Akun': 'Account Upgrade',
+    'Gunakan email dan kata sandi akun pelanggan Anda untuk membuka etalase penjual.': 'Use your customer account email and password to open a seller storefront.',
+    'Kata Sandi Akun Pelanggan': 'Customer Account Password',
+    'Masukkan kata sandi akun pelanggan Anda': 'Enter your customer account password',
+    'Tingkatkan ke Penjual': 'Upgrade to Seller',
+    'Akun berhasil ditingkatkan menjadi penjual': 'Account successfully upgraded to seller',
+    'Token sesi tidak diterima dari server': 'Session token was not received from the server',
+    'Akun yang dibuka tidak sama dengan akun yang sedang login.': 'The account does not match the account currently logged in.',
+    'Akun ini sudah menjadi penjual.': 'This account is already a seller.',
 
     // Customer profile
     'PROFIL SAYA': 'MY PROFILE',
@@ -428,6 +441,7 @@ class AppL10n {
     ('Percobaan gagal: ', 'Failed attempts: '),
     ('Gagal menghapus: ', 'Failed to delete: '),
     ('Gagal mengunggah foto: ', 'Failed to upload photo: '),
+    ('Gagal mengambil foto: ', 'Failed to take photo: '),
     ('Gagal menyimpan profil: ', 'Failed to save profile: '),
     ('Gagal menyimpan: ', 'Failed to save: '),
     ('Stok: ', 'Stock: '),
