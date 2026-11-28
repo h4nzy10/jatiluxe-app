@@ -169,7 +169,7 @@ class _CustomerCatalogPageState extends State<CustomerCatalogPage>
         centerTitle: false,
         titleSpacing: 22,
         title: const TText(
-          'J A T I L U X E',
+          'JatiLuxe',
           style: TextStyle(
             color: AppColors.ivorySilk,
             fontSize: 13,

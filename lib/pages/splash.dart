@@ -161,7 +161,7 @@ class _SplashPageState extends State<SplashPage>
 
                     // Main Brand Wordmark
                     const TText(
-                      'J A T I L U X E',
+                      'JatiLuxe',
                       style: TextStyle(
                         color: AppColors.ivorySilk,
                         fontSize: 22,
@@ -218,7 +218,7 @@ class _SplashPageState extends State<SplashPage>
                 opacity: _fadeAnimation,
                 child: const Center(
                   child: TText(
-                    'JATILUXE',
+                    'JatiLuxe',
                     style: TextStyle(
                       color: AppColors.ashGreySubtle,
                       fontSize: 10,

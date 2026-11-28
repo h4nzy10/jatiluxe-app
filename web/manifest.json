@@ -1,6 +1,6 @@
 {
-    "name": "jatiluxe_app",
-    "short_name": "jatiluxe_app",
+    "name": "JatiLuxe",
+    "short_name": "JatiLuxe",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

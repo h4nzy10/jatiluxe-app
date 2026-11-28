@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16),
                   const Center(
                     child: TText(
-                      'J A T I L U X E',
+                      'JatiLuxe',
                       style: TextStyle(
                         color: AppColors.champagneGold,
                         fontSize: 13,
