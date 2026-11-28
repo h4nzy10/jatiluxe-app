@@ -48,3 +48,4 @@ app.*.map.json
 .widget_preview/
 
 guide.md
+BLACKBOX_TEST_CHECKLIST.md
