@@ -22,6 +22,10 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSCameraUsageDescription</key>
+	<string>JatiLuxe menggunakan kamera untuk foto profil workshop dan bukti pengiriman.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>JatiLuxe memerlukan akses galeri untuk memilih foto profil workshop dan bukti pengiriman.</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
